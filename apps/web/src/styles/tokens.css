@@ -5,13 +5,18 @@
   --font-display: 'Space Grotesk', var(--font-sans);
   
   /* Fallback Base dark tokens */
+  --theme-primary: #38bdf8;
+  --theme-secondary: #00e5ff;
   --theme-bg: #090b10;
-  --theme-surface: #111520;
-  --theme-surface-elevated: #1a2030;
+  --theme-background: #090b10;
+  --theme-surface: rgba(17, 21, 32, 0.85);
+  --theme-surface-elevated: rgba(26, 32, 48, 0.95);
   --theme-border: #273147;
   --theme-accent: #38bdf8;
   --theme-accent-contrast: #000000;
-  --theme-glow: rgba(56, 189, 248, 0.2);
+  --theme-glow: rgba(56, 189, 248, 0.25);
+  --theme-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+  --theme-radius: 12px;
   --theme-text: #f8fafc;
   --theme-muted: #94a3b8;
   --theme-font-family: var(--font-sans);
@@ -45,9 +50,13 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   overflow-x: hidden;
-  transition: background-color var(--transition-normal), color var(--transition-normal);
+  transition: background-color 0.4s ease, color 0.4s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[data-genre] {
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 button {
@@ -207,14 +216,61 @@ textarea::placeholder {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ─── Staggered Animation Delays ─── */
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.1s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.2s; }
-.stagger-5 { animation-delay: 0.25s; }
-.stagger-6 { animation-delay: 0.3s; }
-.stagger-7 { animation-delay: 0.35s; }
-.stagger-8 { animation-delay: 0.4s; }
-.stagger-9 { animation-delay: 0.45s; }
-.stagger-10 { animation-delay: 0.5s; }
+/* ─── Atmospheric Scene Shared Animations ─── */
+@keyframes rainDrop {
+  to { transform: translate(-18vw, 120vh) rotate(14deg); }
+}
+
+@keyframes cloudDrift {
+  to { transform: translateX(120vw); }
+}
+
+@keyframes sirenFlash {
+  0%, 45%, 100% { opacity: 0.08; transform: scale(0.9); }
+  15%, 30% { opacity: 0.38; transform: scale(1.15); }
+}
+
+@keyframes shipRock {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-3deg) translateY(0); }
+  50% { transform: translate(-50%, -48%) rotate(4deg) translateY(8px); }
+}
+
+@keyframes trainLoop {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100vw + 1300px)); }
+}
+
+@keyframes heartBloom {
+  0%, 40% { opacity: 0; transform: translate(-50%, -50%) rotate(-45deg) scale(0.2); }
+  48% { opacity: 1; transform: translate(-50%, -50%) rotate(-45deg) scale(1); }
+  56% { opacity: 1; transform: translate(-50%, -50%) rotate(-45deg) scale(1.12); }
+  64% { opacity: 0; transform: translate(-50%, -50%) rotate(-45deg) scale(2.2); }
+  100% { opacity: 0; }
+}
+
+@keyframes synthGridMove {
+  to { background-position: 0 38px, 75px 0; }
+}
+
+@keyframes dustDrift {
+  to { transform: translate(60px, -25px); }
+}
+
+@keyframes witchFly {
+  0% { transform: translate(0, 15px) rotate(-3deg); opacity: 0; }
+  8% { opacity: 0.85; }
+  30% { transform: translate(32vw, -4vh) rotate(2deg); }
+  55% { transform: translate(60vw, 4vh) rotate(-2deg); }
+  80% { transform: translate(88vw, -5vh) rotate(2deg); }
+  94% { opacity: 0.7; }
+  100% { transform: translate(118vw, 0); opacity: 0; }
+}
+
+@keyframes batFly {
+  0% { transform: translate(-12vw, 0) scale(0.5); opacity: 0; }
+  8% { opacity: 0.85; }
+  25% { transform: translate(22vw, -7vh) scale(0.7); }
+  50% { transform: translate(52vw, 3vh) scale(0.95); }
+  75% { transform: translate(80vw, -4vh) scale(0.65); }
+  100% { transform: translate(120vw, 4vh) scale(0.45); opacity: 0; }
+}

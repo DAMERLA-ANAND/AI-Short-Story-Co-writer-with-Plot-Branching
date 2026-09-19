@@ -23,6 +23,10 @@ export interface GenreColorTokens {
   glow: string;
   text: string;
   muted: string;
+  primary?: string;
+  secondary?: string;
+  shadow?: string;
+  radius?: string;
 }
 
 export interface GenreConfig {
@@ -178,9 +182,9 @@ export const GENRE_REGISTRY: Record<GenreId, GenreConfig> = {
   },
   historical: {
     id: 'historical',
-    displayName: 'Historical Fiction',
-    description: 'Echoes of the past, ancient courts, and historical milestones.',
-    icon: '📜',
+    displayName: 'Egyptian / Historical',
+    description: 'Ancient pharaohs, timeless pyramids, and lost dynastic secrets.',
+    icon: '🏛️',
     fontFamily: "'Baskerville', 'Times New Roman', serif",
     tokens: {
       background: '#0e0c0a',
@@ -198,9 +202,9 @@ export const GENRE_REGISTRY: Record<GenreId, GenreConfig> = {
   },
   drama: {
     id: 'drama',
-    displayName: 'Literary Drama',
-    description: 'Human complexity, quiet dilemmas, and philosophical resonance.',
-    icon: '🖋️',
+    displayName: 'Theater / Drama',
+    description: 'Human complexity, spotlight dilemmas, and grand dramatic tension.',
+    icon: '🎭',
     fontFamily: "'Lora', Georgia, serif",
     tokens: {
       background: '#090b10',
