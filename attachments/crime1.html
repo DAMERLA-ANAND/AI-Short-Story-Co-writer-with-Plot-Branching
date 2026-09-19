@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Noir</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#030405}
+body{font-family:Arial,sans-serif}
+.scene{
+  position:relative;width:100vw;height:100vh;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 70%,rgba(55,65,72,.16),transparent 35%),
+    linear-gradient(#020304 0%,#07090b 58%,#020304 100%);
+}
+.sky{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 18% 28%,rgba(130,145,155,.08),transparent 18%),
+    radial-gradient(circle at 82% 35%,rgba(80,90,100,.07),transparent 20%);
+}
+.moon{
+  position:absolute;top:9%;right:14%;width:75px;height:75px;border-radius:50%;
+  background:radial-gradient(circle at 38% 35%,#e6e6df,#8b8d8b 68%,#4a4b4a);
+  box-shadow:0 0 45px rgba(220,225,220,.12);
+  animation:moon 7s ease-in-out infinite;
+}
+@keyframes moon{50%{opacity:.72;transform:scale(.96)}}
+
+.buildings{
+  position:absolute;left:0;right:0;bottom:17%;height:48%;
+  display:flex;align-items:flex-end;gap:1.5vw;padding:0 2vw;
+}
+.building{
+  position:relative;flex:1;min-width:35px;
+  background:linear-gradient(90deg,#050607,#111416,#050607);
+  border-top:1px solid #171b1d;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.8);
+}
+.building:nth-child(1){height:62%}.building:nth-child(2){height:83%}
+.building:nth-child(3){height:54%}.building:nth-child(4){height:95%}
+.building:nth-child(5){height:68%}.building:nth-child(6){height:88%}
+.building:nth-child(7){height:57%}.building:nth-child(8){height:78%}
+.building:nth-child(9){height:48%}.building:nth-child(10){height:73%}
+.window{
+  position:absolute;width:5px;height:8px;background:#b29b67;
+  box-shadow:0 0 6px rgba(190,160,80,.25);
+  opacity:.35;animation:flicker 4s infinite;
+}
+@keyframes flicker{0%,88%,100%{opacity:.2}91%{opacity:.8}93%{opacity:.25}96%{opacity:.6}}
+
+.street{
+  position:absolute;left:0;right:0;bottom:0;height:20%;
+  background:linear-gradient(#0b0d0e,#020304);
+  border-top:1px solid #141718;
+}
+.street::after{
+  content:"";position:absolute;left:0;right:0;top:48%;height:2px;
+  background:repeating-linear-gradient(90deg,transparent 0 70px,#9a9a8c 70px 125px,transparent 125px 190px);
+  opacity:.15;
+  animation:road 3s linear infinite;
+}
+@keyframes road{to{transform:translateX(-190px)}}
+
+.lamp{
+  position:absolute;bottom:20%;left:16%;width:5px;height:40%;
+  background:#16191a;
+}
+.lamp:before{
+  content:"";position:absolute;top:-8px;left:-10px;width:25px;height:9px;
+  border-radius:50%;background:#77705c;box-shadow:0 0 16px 5px rgba(210,185,105,.2);
+}
+.lamp:nth-of-type(2){left:84%;height:34%}
+.lamp:nth-of-type(2):after{
+  content:"";position:absolute;top:0;left:-150px;width:310px;height:240px;
+  background:radial-gradient(ellipse at top,rgba(200,180,120,.07),transparent 65%);
+  pointer-events:none;
+}
+
+.policeGlow{
+  position:absolute;top:-15%;width:55vw;height:140%;
+  filter:blur(32px);opacity:.18;mix-blend-mode:screen;
+  animation:siren 3.2s ease-in-out infinite;
+}
+.red{left:-20%;background:radial-gradient(ellipse,rgba(255,0,25,.65),transparent 62%)}
+.blue{right:-20%;background:radial-gradient(ellipse,rgba(20,70,255,.6),transparent 62%);animation-delay:1.6s}
+@keyframes siren{
+  0%,45%,100%{opacity:.06;transform:scale(.85)}
+  12%,28%{opacity:.3;transform:scale(1.1)}
+}
+
+.beam{
+  position:absolute;left:50%;top:-10%;width:2px;height:125%;
+  transform-origin:50% 0;
+  background:linear-gradient(transparent,rgba(220,225,215,.1),transparent);
+  filter:blur(10px);animation:search 8s ease-in-out infinite;
+}
+@keyframes search{
+  0%,100%{transform:rotate(-32deg)}
+  50%{transform:rotate(32deg)}
+}
+
+.rain{position:absolute;inset:0;overflow:hidden}
+.drop{
+  position:absolute;top:-30px;width:1px;height:35px;
+  background:linear-gradient(transparent,rgba(190,205,215,.42));
+  transform:rotate(12deg);
+  animation:rain linear infinite;
+}
+@keyframes rain{to{transform:translate(-150px,110vh) rotate(12deg)}}
+
+.fog{
+  position:absolute;left:-15%;bottom:7%;width:130%;height:30%;
+  background:
+    radial-gradient(ellipse at 20% 50%,rgba(150,160,165,.09),transparent 35%),
+    radial-gradient(ellipse at 60% 40%,rgba(150,160,165,.08),transparent 40%),
+    radial-gradient(ellipse at 90% 60%,rgba(150,160,165,.08),transparent 32%);
+  filter:blur(14px);animation:fog 12s ease-in-out infinite alternate;
+}
+@keyframes fog{to{transform:translateX(10%);opacity:.65}}
+
+.shadow{
+  position:absolute;left:50%;bottom:18%;width:80px;height:210px;
+  transform:translateX(-50%);
+  background:linear-gradient(90deg,transparent,#010101 18%,#010101 82%,transparent);
+  clip-path:polygon(35% 0,65% 0,73% 17%,69% 35%,86% 52%,100% 100%,0 100%,14% 52%,31% 35%,27% 17%);
+  filter:blur(2px);opacity:.65;
+  animation:shadow 5s ease-in-out infinite;
+}
+@keyframes shadow{50%{transform:translateX(-50%) scaleX(.92);opacity:.82}}
+
+.tape{
+  position:absolute;bottom:24%;left:-5%;width:110%;height:4px;
+  background:#d6c85c;box-shadow:0 0 10px rgba(210,195,70,.12);
+  transform:rotate(-2deg);opacity:.15;animation:tape 4s ease-in-out infinite;
+}
+@keyframes tape{50%{transform:rotate(2deg) translateY(-8px)}}
+
+.particle{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:#aeb6b8;box-shadow:0 0 7px #899396;
+  animation:float linear infinite;opacity:0;
+}
+@keyframes float{
+  0%{transform:translateY(30px);opacity:0}
+  20%{opacity:.5}80%{opacity:.15}
+  100%{transform:translateY(-35vh) translateX(50px);opacity:0}
+}
+.vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse,transparent 30%,rgba(0,0,0,.78) 100%);
+  pointer-events:none;
+}
+</style>
+</head>
+<body>
+<div class="scene">
+  <div class="sky"></div>
+  <div class="moon"></div>
+  <div class="policeGlow red"></div>
+  <div class="policeGlow blue"></div>
+  <div class="beam"></div>
+
+  <div class="buildings" id="buildings"></div>
+
+  <div class="lamp"></div>
+  <div class="lamp"></div>
+
+  <div class="shadow"></div>
+  <div class="tape"></div>
+  <div class="street"></div>
+  <div class="fog"></div>
+  <div class="rain" id="rain"></div>
+  <div id="particles"></div>
+  <div class="vignette"></div>
+</div>
+
+<script>
+const buildings=document.getElementById("buildings");
+for(let b=0;b<10;b++){
+  const el=document.createElement("div");el.className="building";
+  const rows=4+Math.floor(Math.random()*5);
+  const cols=2+Math.floor(Math.random()*3);
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const w=document.createElement("div");w.className="window";
+    w.style.left=(12+c*(72/cols)+Math.random()*8)+"%";
+    w.style.top=(8+r*(82/rows)+Math.random()*5)+"%";
+    w.style.animationDelay=(Math.random()*5)+"s";
+    el.appendChild(w);
+  }
+  buildings.appendChild(el);
+}
+
+const rain=document.getElementById("rain");
+for(let i=0;i<180;i++){
+  const d=document.createElement("div");d.className="drop";
+  d.style.left=Math.random()*110+"%";
+  d.style.animationDuration=(.55+Math.random()*.8)+"s";
+  d.style.animationDelay=(-Math.random()*2)+"s";
+  d.style.opacity=.15+Math.random()*.45;
+  rain.appendChild(d);
+}
+
+const particles=document.getElementById("particles");
+for(let i=0;i<55;i++){
+  const p=document.createElement("div");p.className="particle";
+  p.style.left=Math.random()*100+"%";
+  p.style.bottom=(8+Math.random()*28)+"%";
+  p.style.animationDuration=(5+Math.random()*8)+"s";
+  p.style.animationDelay=(-Math.random()*10)+"s";
+  p.style.transform=`scale(${.5+Math.random()*1.5})`;
+  particles.appendChild(p);
+}
+</script>
+</body>
+</html>

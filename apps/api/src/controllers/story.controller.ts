@@ -10,6 +10,7 @@ import {
   getStoryWorkspace,
   setActiveScene,
   listStories,
+  deleteStory,
 } from '../services/story.service.js';
 import {
   continueStory,
@@ -137,3 +138,14 @@ export async function handleExportStory(req: Request, res: Response, next: NextF
     next(err);
   }
 }
+
+export async function handleDeleteStory(req: Request, res: Response, next: NextFunction) {
+  try {
+    const storyId = req.params.storyId as string;
+    await deleteStory(storyId);
+    res.status(200).json({ success: true, deletedStoryId: storyId });
+  } catch (err) {
+    next(err);
+  }
+}
+

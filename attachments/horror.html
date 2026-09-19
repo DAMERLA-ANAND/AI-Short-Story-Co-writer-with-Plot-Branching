@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackwood</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#010101}
+body{font-family:Georgia,serif}
+.scene{position:relative;width:100vw;height:100vh;overflow:hidden;
+background:
+radial-gradient(ellipse at 50% 35%,rgba(38,39,43,.28),transparent 36%),
+linear-gradient(#07080a 0%,#020304 57%,#000 100%)}
+.sky{position:absolute;inset:0}
+
+/* moon with atmospheric halo */
+.moonHalo{position:absolute;left:69%;top:10%;width:220px;height:220px;border-radius:50%;
+background:radial-gradient(circle,rgba(210,211,201,.12),rgba(190,195,190,.035) 35%,transparent 70%);
+filter:blur(7px)}
+.moon{position:absolute;left:69%;top:13%;width:104px;height:104px;border-radius:50%;
+background:radial-gradient(circle at 38% 34%,#e3e2d5,#a8a89e 63%,#73736d 100%);
+box-shadow:0 0 50px rgba(220,220,205,.12);overflow:hidden;opacity:.78}
+.moon i{position:absolute;border-radius:50%;background:rgba(75,75,70,.22)}
+.moon i:nth-child(1){width:20px;height:12px;left:20px;top:23px}
+.moon i:nth-child(2){width:13px;height:13px;left:62px;top:17px}
+.moon i:nth-child(3){width:26px;height:17px;left:46px;top:54px}
+.moon i:nth-child(4){width:12px;height:9px;left:16px;top:69px}
+.moon i:nth-child(5){width:8px;height:8px;left:76px;top:76px}
+
+/* stars */
+.star{position:absolute;width:1.5px;height:1.5px;border-radius:50%;background:#ddd;
+box-shadow:0 0 5px #fff;animation:twinkle var(--t) ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.08;transform:scale(.25)}}
+
+/* clouds */
+.cloud{position:absolute;width:45vw;height:90px;border-radius:50%;
+background:rgba(20,22,25,.45);filter:blur(22px);animation:cloud 28s linear infinite}
+.cloud.a{left:-45%;top:22%}.cloud.b{left:30%;top:30%;animation-delay:-15s;transform:scale(.7)}
+@keyframes cloud{to{transform:translateX(180vw)}}
+
+/* distant forest */
+.farForest{position:absolute;left:0;right:0;bottom:18%;height:38%;
+background:#020303;
+clip-path:polygon(
+0 100%,0 62%,4% 48%,7% 57%,10% 38%,13% 55%,16% 45%,19% 59%,22% 42%,25% 54%,
+28% 37%,31% 56%,34% 44%,37% 58%,40% 39%,43% 52%,46% 43%,49% 57%,52% 36%,
+55% 53%,58% 41%,61% 58%,64% 44%,67% 54%,70% 38%,73% 57%,76% 42%,79% 55%,
+82% 37%,85% 54%,88% 43%,91% 57%,94% 39%,97% 51%,100% 43%,100% 100%)}
+
+/* foreground tree trunks and branches */
+.tree{position:absolute;bottom:13%;width:var(--w);height:var(--h);z-index:5;
+filter:drop-shadow(8px 0 8px rgba(0,0,0,.7))}
+.trunk{position:absolute;bottom:0;left:42%;width:17%;height:100%;
+background:linear-gradient(90deg,#010101,#0a0a0a 45%,#020202);
+border-radius:45% 55% 8% 8%;transform:rotate(var(--tilt));transform-origin:bottom}
+.branch{position:absolute;height:var(--thick);border-radius:100%;
+background:linear-gradient(#050505,#000);transform-origin:left center}
+.b1{left:44%;top:20%;width:62%;transform:rotate(-42deg)}
+.b2{left:48%;top:33%;width:58%;transform:rotate(31deg)}
+.b3{left:40%;top:45%;width:54%;transform:rotate(-28deg)}
+.b4{left:52%;top:57%;width:49%;transform:rotate(27deg)}
+.b5{left:43%;top:69%;width:42%;transform:rotate(-20deg)}
+.branch:after{content:"";position:absolute;left:40%;top:0;width:60%;height:80%;
+border-radius:100%;background:#020202;transform:rotate(-32deg)}
+.branch:before{content:"";position:absolute;left:62%;top:0;width:45%;height:70%;
+border-radius:100%;background:#020202;transform:rotate(38deg)}
+
+/* ground */
+.ground{position:absolute;left:-5%;bottom:-2%;width:110%;height:25%;z-index:8;
+background:linear-gradient(#080909,#010101 60%);
+clip-path:polygon(0 30%,7% 24%,14% 34%,23% 26%,31% 37%,40% 27%,49% 34%,58% 25%,68% 36%,77% 27%,88% 34%,100% 22%,100% 100%,0 100%)}
+
+/* realistic-ish witch silhouette: distant and small */
+.witch{position:absolute;z-index:11;left:-15%;top:30%;width:155px;height:110px;
+filter:drop-shadow(0 0 5px rgba(0,0,0,.8));animation:witch 19s linear infinite}
+.witch .broom{position:absolute;left:4px;top:73px;width:145px;height:4px;background:#0a0705;
+border-radius:5px;transform:rotate(-5deg)}
+.witch .bristles{position:absolute;left:0;top:62px;width:32px;height:25px;background:#080604;
+clip-path:polygon(100% 20%,75% 55%,100% 88%,0 100%,25% 52%,0 0)}
+.witch .dress{position:absolute;left:75px;top:35px;width:31px;height:48px;background:#000;
+clip-path:polygon(45% 0,65% 0,100% 100%,0 100%)}
+.witch .head{position:absolute;left:79px;top:20px;width:20px;height:21px;border-radius:50%;background:#000}
+.witch .hat{position:absolute;left:68px;top:5px;width:45px;height:22px;background:#000;
+clip-path:polygon(0 100%,100% 100%,64% 70%,45% 0,27% 70%)}
+.witch .arm{position:absolute;left:72px;top:42px;width:8px;height:37px;background:#000;transform:rotate(55deg)}
+.witch .leg{position:absolute;left:82px;top:72px;width:7px;height:28px;background:#000;transform:rotate(28deg)}
+.witch .leg2{left:98px;transform:rotate(-25deg)}
+@keyframes witch{
+0%{transform:translate(0,20px) rotate(-3deg);opacity:0}
+7%{opacity:.8}
+30%{transform:translate(32vw,-4vh) rotate(2deg)}
+55%{transform:translate(58vw,5vh) rotate(-2deg)}
+80%{transform:translate(85vw,-6vh) rotate(2deg)}
+94%{opacity:.7}100%{transform:translate(118vw,-1vh);opacity:0}
+}
+
+/* bats as actual wing silhouettes */
+.bat{position:absolute;z-index:12;width:52px;height:25px;animation:bat var(--dur) linear infinite}
+.bat .body{position:absolute;left:22px;top:8px;width:9px;height:15px;border-radius:50%;background:#000}
+.bat .wing{position:absolute;top:4px;width:29px;height:19px;background:#000}
+.bat .wl{left:0;clip-path:polygon(100% 55%,72% 0,54% 42%,0 8%,14% 100%,53% 68%)}
+.bat .wr{right:0;clip-path:polygon(0 55%,28% 0,46% 42%,100% 8%,86% 100%,47% 68%)}
+@keyframes bat{
+0%{transform:translate(-12vw,0) scale(.5);opacity:0}
+8%{opacity:.85}25%{transform:translate(20vw,-8vh) scale(.7)}
+50%{transform:translate(50vw,3vh) scale(.95)}
+75%{transform:translate(78vw,-5vh) scale(.65)}
+100%{transform:translate(120vw,5vh) scale(.45);opacity:0}
+}
+
+/* lightning: branching SVG-like CSS shape */
+.lightning{position:absolute;z-index:9;left:49%;top:5%;width:180px;height:72%;
+opacity:0;filter:drop-shadow(0 0 6px white) drop-shadow(0 0 20px #adcfff);
+animation:bolt 9s infinite}
+.lightning:before{content:"";position:absolute;left:75px;top:0;width:9px;height:100%;
+background:#f2f5ff;clip-path:polygon(60% 0,0 30%,45% 29%,15% 60%,58% 57%,32% 100%,85% 51%,52% 52%,88% 20%,52% 22%)}
+.lightning:after{content:"";position:absolute;left:80px;top:25%;width:80px;height:35%;
+background:#eaf2ff;clip-path:polygon(0 5%,45% 0,15% 40%,100% 25%,48% 55%,70% 100%,28% 64%,0 75%,30% 38%);
+opacity:.8}
+@keyframes bolt{
+0%,43%,100%{opacity:0}
+44%{opacity:.9}45%{opacity:.05}46%{opacity:1}47%{opacity:0}
+48%{opacity:.55}49%{opacity:0}
+}
+.flash{position:absolute;inset:0;z-index:8;background:white;opacity:0;animation:flash 9s infinite}
+@keyframes flash{44%{opacity:.025}46%{opacity:.07}47%{opacity:0}48%{opacity:.025}}
+
+/* fog layers */
+.fog{position:absolute;left:-20%;bottom:6%;width:140%;height:30%;z-index:13;
+background:radial-gradient(ellipse at 20% 50%,rgba(180,185,185,.075),transparent 33%),
+radial-gradient(ellipse at 62% 45%,rgba(180,185,185,.055),transparent 40%),
+radial-gradient(ellipse at 90% 58%,rgba(180,185,185,.06),transparent 30%);
+filter:blur(16px);animation:fog 16s ease-in-out infinite alternate}
+@keyframes fog{to{transform:translateX(11%);opacity:.55}}
+
+/* vignette */
+.vignette{position:absolute;inset:0;z-index:30;pointer-events:none;
+background:radial-gradient(ellipse at center,transparent 18%,rgba(0,0,0,.9) 100%)}
+</style>
+</head>
+<body>
+<div class="scene">
+<div class="sky" id="stars"></div>
+<div class="moonHalo"></div>
+<div class="moon"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="cloud a"></div><div class="cloud b"></div>
+<div class="farForest"></div>
+<div id="trees"></div>
+<div class="ground"></div>
+
+<div class="witch">
+ <div class="hat"></div><div class="head"></div><div class="dress"></div>
+ <div class="arm"></div><div class="leg"></div><div class="leg leg2"></div>
+ <div class="broom"></div><div class="bristles"></div>
+</div>
+
+<div id="bats"></div>
+<div class="lightning"></div><div class="flash"></div>
+<div class="fog"></div><div class="vignette"></div>
+</div>
+<script>
+const stars=document.getElementById("stars");
+for(let i=0;i<95;i++){
+ const s=document.createElement("i");s.className="star";
+ s.style.left=Math.random()*100+"%";s.style.top=Math.random()*57+"%";
+ s.style.setProperty("--t",(1.5+Math.random()*4)+"s");
+ s.style.animationDelay=(-Math.random()*4)+"s";stars.appendChild(s);
+}
+const trees=document.getElementById("trees");
+for(let i=0;i<15;i++){
+ const t=document.createElement("div");t.className="tree";
+ t.style.left=(-1+i*7+Math.random()*3)+"%";
+ t.style.setProperty("--w",(75+Math.random()*80)+"px");
+ t.style.setProperty("--h",(220+Math.random()*270)+"px");
+ t.style.setProperty("--tilt",(Math.random()*8-4)+"deg");
+ t.style.setProperty("--thick",(4+Math.random()*4)+"px");
+ const tr=document.createElement("div");tr.className="trunk";t.appendChild(tr);
+ for(let j=1;j<=5;j++){const b=document.createElement("div");b.className="branch b"+j;t.appendChild(b)}
+ trees.appendChild(t);
+}
+const bats=document.getElementById("bats");
+for(let i=0;i<8;i++){
+ const b=document.createElement("div");b.className="bat";
+ b.style.top=(12+Math.random()*42)+"%";
+ b.style.setProperty("--dur",(10+Math.random()*10)+"s");
+ b.style.animationDelay=(-Math.random()*18)+"s";
+ b.innerHTML='<div class="body"></div><div class="wing wl"></div><div class="wing wr"></div>';
+ bats.appendChild(b);
+}
+</script>
+</body>
+</html>

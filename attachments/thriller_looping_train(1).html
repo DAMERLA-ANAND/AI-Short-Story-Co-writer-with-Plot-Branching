@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Night Train Thriller</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#010304}
+body{font-family:Georgia,serif}
+.scene{
+  position:relative;width:100vw;height:100vh;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 34%,rgba(48,61,57,.15),transparent 38%),
+    linear-gradient(#030708 0%,#070c0d 43%,#020405 100%);
+}
+
+/* distant night */
+.moon{position:absolute;right:16%;top:11%;width:70px;height:70px;border-radius:50%;
+background:radial-gradient(circle at 35% 30%,#aeb5aa,#555d57 62%,#222824);
+opacity:.13;box-shadow:0 0 55px 12px rgba(180,195,176,.08)}
+.cloud{position:absolute;width:55vw;height:14vh;border-radius:50%;background:#010304;filter:blur(16px);opacity:.8}
+.cloud:before,.cloud:after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud:before{width:50%;height:130%;left:18%;top:-50%}
+.cloud:after{width:45%;height:120%;right:5%;top:-35%}
+.c1{top:7%;left:-15%;animation:cloud1 24s linear infinite}
+.c2{top:19%;left:45%;animation:cloud2 31s linear infinite}
+@keyframes cloud1{to{transform:translateX(30vw)}}@keyframes cloud2{to{transform:translateX(-25vw)}}
+
+/* trees */
+.forest{position:absolute;z-index:3;bottom:31%;left:0;right:0;height:38%;overflow:hidden}
+.tree{position:absolute;bottom:0;width:5px;background:#010202;transform-origin:bottom}
+.tree:before,.tree:after{content:"";position:absolute;height:4px;width:75px;background:#010202;transform-origin:left}
+.tree:before{top:25%;left:0;transform:rotate(-38deg)}
+.tree:after{top:48%;left:0;transform:rotate(35deg)}
+.t1{left:3%;height:210px}.t2{left:12%;height:270px;transform:scale(.7)}
+.t3{left:22%;height:190px}.t4{left:32%;height:245px;transform:scale(.72)}
+.t5{left:69%;height:230px}.t6{left:81%;height:275px;transform:scale(.72)}
+.t7{left:92%;height:205px}
+.fog{position:absolute;z-index:8;left:-15%;width:130%;height:17%;
+background:linear-gradient(90deg,transparent,rgba(125,139,130,.10),rgba(173,181,163,.06),transparent);
+filter:blur(13px);animation:fog 15s linear infinite}
+.f1{top:44%}.f2{top:62%;animation-duration:21s;animation-direction:reverse;opacity:.65}
+@keyframes fog{from{transform:translateX(-12%)}to{transform:translateX(12%)}}
+
+/* railway */
+.ground{position:absolute;z-index:5;left:0;right:0;bottom:0;height:40%;
+background:linear-gradient(#0c0f0d,#050706 45%,#010202)}
+.rail{position:absolute;left:-10%;width:120%;height:5px;
+background:linear-gradient(90deg,#22251f,#62645a,#242720);box-shadow:0 2px 7px #000}
+.r1{bottom:23%;transform:rotate(-4deg)}.r2{bottom:9%;transform:rotate(4deg)}
+.sleeper{position:absolute;bottom:8%;width:34px;height:6px;background:#151713;transform:rotate(5deg)}
+.s1{left:3%}.s2{left:13%}.s3{left:24%}.s4{left:36%}.s5{left:49%}.s6{left:62%}.s7{left:76%}.s8{left:89%}
+
+/* tunnel in background */
+.tunnel{position:absolute;z-index:4;left:50%;top:22%;width:43vw;height:48vh;min-width:420px;
+transform:translateX(-50%);border-radius:50% 50% 3% 3%/38% 38% 3% 3%;
+background:#010202;border:14px solid #171a16;box-shadow:inset 0 0 80px #000,0 0 30px #000}
+.tunnel:before{content:"";position:absolute;inset:8px;border:2px solid #30332b;border-radius:50% 50% 2% 2%/35% 35% 2% 2%;opacity:.5}
+
+/* BLINKING STREET / RAIL LIGHTS */
+.lamp{position:absolute;z-index:13;width:8px;height:8px;border-radius:50%;background:#b8a86d;
+box-shadow:0 0 12px 4px rgba(209,181,101,.28);animation:blink 3.7s steps(1) infinite}
+.lamp:before{content:"";position:absolute;left:3px;top:-48px;width:3px;height:48px;background:#242720}
+.lamp:after{content:"";position:absolute;left:-12px;top:-3px;width:32px;height:3px;background:#252820}
+.l1{left:7%;bottom:29%;animation-delay:-.4s}.l2{left:18%;bottom:33%;animation-delay:-2.1s}
+.l3{left:30%;bottom:30%;animation-delay:-1.2s}.l4{left:43%;bottom:34%;animation-delay:-3s}
+.l5{left:57%;bottom:31%;animation-delay:-.9s}.l6{left:70%;bottom:35%;animation-delay:-2.7s}
+.l7{left:83%;bottom:30%;animation-delay:-1.7s}.l8{left:94%;bottom:33%;animation-delay:-3.4s}
+@keyframes blink{
+0%,8%,10%,35%,38%,67%,70%,100%{opacity:1}
+9%,36%,68%{opacity:.08}
+}
+
+/* WIND */
+.wind{position:absolute;z-index:15;inset:0;overflow:hidden;pointer-events:none}
+.gust{position:absolute;height:2px;width:22vw;
+background:linear-gradient(90deg,transparent,rgba(185,205,195,.25),transparent);
+filter:blur(.5px);animation:gustR 5s linear infinite}
+.g1{top:20%;left:-25%}.g2{top:29%;left:110%;animation:gustL 6s linear infinite;animation-delay:1s}
+.g3{top:38%;left:-30%;animation-delay:2s}.g4{top:14%;left:115%;animation:gustL 5.5s linear infinite;animation-delay:2.5s}
+@keyframes gustR{0%{transform:translateX(0) rotate(8deg);opacity:0}12%{opacity:.7}100%{transform:translateX(155vw) rotate(8deg);opacity:0}}
+@keyframes gustL{0%{transform:translateX(0) rotate(-9deg);opacity:0}12%{opacity:.7}100%{transform:translateX(-155vw) rotate(-9deg);opacity:0}}
+
+/* COMPLETE TRAIN - long connected consist */
+.train{
+position:absolute;z-index:22;left:-430px;top:51%;height:190px;width:1180px;
+animation:trainLoop 15s linear infinite;
+filter:drop-shadow(0 18px 16px rgba(0,0,0,.8))}
+@keyframes trainLoop{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 1250px))}}
+.engine,.car{
+position:absolute;bottom:26px;height:108px;
+background:linear-gradient(#171b18,#292c25 48%,#0b0d0b);
+border:3px solid #3d4036;border-bottom:7px solid #070907;
+box-shadow:inset 0 -18px 25px rgba(0,0,0,.55)}
+.engine{left:0;width:220px;border-radius:12px 6px 3px 3px}
+.car{width:175px;border-radius:4px}
+.car1{left:230px}.car2{left:415px}.car3{left:600px}.car4{left:785px}.car5{left:970px}
+.roof{position:absolute;left:-8px;right:-8px;top:-15px;height:17px;border-radius:12px;background:#292c25;border:3px solid #10120f}
+.window{position:absolute;top:25px;width:30px;height:32px;border:3px solid #080a08;
+background:#090c0b;box-shadow:inset 0 0 11px rgba(176,187,147,.15)}
+.car .window:nth-child(2){left:20px}.car .window:nth-child(3){left:60px}.car .window:nth-child(4){left:100px}.car .window:nth-child(5){left:140px}
+.engine .window{left:32px}.engine .w2{left:75px}.engine .w3{left:118px}
+.light{position:absolute;left:181px;bottom:20px;width:25px;height:25px;border-radius:50%;
+background:#d0c997;box-shadow:0 0 22px 8px rgba(213,205,139,.35),0 0 75px 22px rgba(205,214,165,.08)}
+.smoke{position:absolute;left:72px;top:-38px;width:38px;height:38px;border-radius:50%;background:rgba(135,145,134,.13);filter:blur(10px);animation:smoke 2.8s ease-out infinite}
+.s2{left:96px;animation-delay:.9s}.s3{left:125px;animation-delay:1.7s}
+@keyframes smoke{from{transform:translate(0,0) scale(.5);opacity:.35}to{transform:translate(40px,-80px) scale(2.2);opacity:0}}
+.wheel{position:absolute;bottom:3px;width:42px;height:42px;border-radius:50%;background:#050605;border:7px solid #1d201b;animation:wheel .9s linear infinite}
+.w1{left:35px}.w2{left:155px}
+.car .w1{left:28px}.car .w2{left:117px}
+@keyframes wheel{to{transform:rotate(360deg)}}
+
+/* headlight beam */
+.beam{position:absolute;z-index:21;left:180px;bottom:39px;width:500px;height:190px;
+background:conic-gradient(from 180deg at 0 100%,rgba(206,211,166,.08),transparent 28deg,transparent 150deg,rgba(206,211,166,.04));
+filter:blur(8px);animation:beamPulse 2.8s ease-in-out infinite}
+@keyframes beamPulse{50%{opacity:.5}}
+
+/* rain */
+.rain{position:absolute;z-index:35;inset:0;overflow:hidden;opacity:.55}
+.drop{position:absolute;top:-10%;width:1px;height:9vh;background:linear-gradient(transparent,rgba(171,190,178,.27));transform:rotate(12deg);animation:rain linear infinite}
+@keyframes rain{to{transform:translate(-15vw,120vh) rotate(12deg)}}
+
+.vignette{position:absolute;z-index:90;inset:0;pointer-events:none;
+background:radial-gradient(ellipse at center,transparent 24%,rgba(0,0,0,.4) 62%,rgba(0,0,0,.94) 100%)}
+.grain{position:absolute;z-index:91;inset:-20%;opacity:.045;pointer-events:none;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+animation:grain .2s steps(2) infinite}
+@keyframes grain{50%{transform:translate(2%,1%)}}
+</style>
+</head>
+<body>
+<div class="scene">
+<div class="moon"></div>
+<div class="cloud c1"></div><div class="cloud c2"></div>
+<div class="forest">
+<i class="tree t1"></i><i class="tree t2"></i><i class="tree t3"></i><i class="tree t4"></i>
+<i class="tree t5"></i><i class="tree t6"></i><i class="tree t7"></i>
+</div>
+<div class="tunnel"></div>
+<div class="fog f1"></div><div class="fog f2"></div>
+
+<div class="lamp l1"></div><div class="lamp l2"></div><div class="lamp l3"></div><div class="lamp l4"></div>
+<div class="lamp l5"></div><div class="lamp l6"></div><div class="lamp l7"></div><div class="lamp l8"></div>
+
+<div class="wind"><i class="gust g1"></i><i class="gust g2"></i><i class="gust g3"></i><i class="gust g4"></i></div>
+
+<div class="train">
+ <div class="engine">
+  <div class="roof"></div><i class="window"></i><i class="window w2"></i><i class="window w3"></i>
+  <div class="light"></div><div class="smoke"></div><div class="smoke s2"></div><div class="smoke s3"></div>
+  <i class="wheel w1"></i><i class="wheel w2"></i>
+ </div>
+ <div class="beam"></div>
+ <div class="car car1"><div class="roof"></div><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="wheel w1"></i><i class="wheel w2"></i></div>
+ <div class="car car2"><div class="roof"></div><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="wheel w1"></i><i class="wheel w2"></i></div>
+ <div class="car car3"><div class="roof"></div><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="wheel w1"></i><i class="wheel w2"></i></div>
+ <div class="car car4"><div class="roof"></div><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="wheel w1"></i><i class="wheel w2"></i></div>
+ <div class="car car5"><div class="roof"></div><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="window"></i><i class="wheel w1"></i><i class="wheel w2"></i></div>
+</div>
+
+<div class="ground">
+<div class="rail r1"></div><div class="rail r2"></div>
+<i class="sleeper s1"></i><i class="sleeper s2"></i><i class="sleeper s3"></i><i class="sleeper s4"></i>
+<i class="sleeper s5"></i><i class="sleeper s6"></i><i class="sleeper s7"></i><i class="sleeper s8"></i>
+</div>
+<div class="rain" id="rain"></div>
+<div class="vignette"></div><div class="grain"></div>
+</div>
+<script>
+const rain=document.getElementById('rain');
+for(let i=0;i<150;i++){
+ const d=document.createElement('i');d.className='drop';
+ d.style.left=Math.random()*115+'%';
+ d.style.height=(4+Math.random()*8)+'vh';
+ d.style.animationDuration=(.45+Math.random()*.8)+'s';
+ d.style.animationDelay=(-Math.random()*2)+'s';
+ d.style.opacity=.15+Math.random()*.55;
+ rain.appendChild(d);
+}
+</script>
+</body>
+</html>

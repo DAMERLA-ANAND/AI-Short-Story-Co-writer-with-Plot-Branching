@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Comedy City — One Very Bad Day</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:#79d5ff;font-family:Arial,sans-serif}
+.scene{position:relative;width:100vw;height:100vh;overflow:hidden;
+background:linear-gradient(#72d3ff 0%,#b9edff 54%,#86c95a 54%,#69a945 100%)}
+
+/* SKY */
+.sun{position:absolute;right:8%;top:7%;width:105px;height:105px;border-radius:50%;
+background:#ffd64a;box-shadow:0 0 55px #ffe47a;animation:sun 2.5s ease-in-out infinite}
+@keyframes sun{50%{transform:scale(1.06)}}
+.cloud{position:absolute;width:190px;height:58px;border-radius:60px;background:white;opacity:.88}
+.cloud:before,.cloud:after{content:"";position:absolute;background:white;border-radius:50%}
+.cloud:before{width:82px;height:82px;left:28px;top:-37px}.cloud:after{width:96px;height:96px;right:22px;top:-47px}
+.c1{left:-230px;top:12%;animation:cloud 24s linear infinite}.c2{left:32%;top:23%;transform:scale(.65);animation:cloud 34s linear infinite -13s}.c3{left:68%;top:10%;transform:scale(.45);animation:cloud 30s linear infinite -8s}
+@keyframes cloud{to{transform:translateX(125vw)}}
+
+/* CITY BACKGROUND */
+.city{position:absolute;left:0;right:0;bottom:32%;height:31%}
+.b{position:absolute;bottom:0;border:3px solid rgba(60,55,49,.45);box-shadow:inset 0 0 30px rgba(0,0,0,.08)}
+.b1{left:2%;width:12%;height:70%;background:#f08b6f}.b2{left:15%;width:10%;height:92%;background:#efc75b}
+.b3{left:26%;width:15%;height:62%;background:#80b9d2}.b4{right:25%;width:13%;height:78%;background:#e69cbd}
+.b5{right:11%;width:11%;height:94%;background:#e9bc61}.b6{right:0;width:10%;height:67%;background:#81c4a1}
+.window{position:absolute;width:15px;height:19px;background:#fff0a0;border:2px solid rgba(50,50,40,.4);animation:window 3s steps(1) infinite}
+@keyframes window{50%{background:#bde8f0}}
+.b1 .window:nth-child(1){left:25%;top:20%}.b1 .window:nth-child(2){left:60%;top:45%}
+.b2 .window:nth-child(1){left:20%;top:18%}.b2 .window:nth-child(2){left:65%;top:34%}.b2 .window:nth-child(3){left:42%;top:60%}
+.b3 .window:nth-child(1){left:20%;top:25%}.b3 .window:nth-child(2){left:65%;top:40%}
+.b4 .window:nth-child(1){left:20%;top:22%}.b4 .window:nth-child(2){left:65%;top:48%}
+.b5 .window:nth-child(1){left:25%;top:17%}.b5 .window:nth-child(2){left:63%;top:38%}.b5 .window:nth-child(3){left:40%;top:63%}
+.b6 .window:nth-child(1){left:20%;top:30%}.b6 .window:nth-child(2){left:65%;top:55%}
+
+/* ROAD */
+.road{position:absolute;z-index:4;left:-4%;right:-4%;bottom:-7%;height:39%;background:#505451;
+transform:perspective(600px) rotateX(2deg);border-top:6px solid #676b65}
+.sidewalk{position:absolute;z-index:5;left:0;right:0;bottom:28%;height:7%;background:#b8b5a3;border-top:5px solid #8f8d7e}
+.lane{position:absolute;z-index:6;left:-5%;bottom:12%;width:110%;height:9px;
+background:repeating-linear-gradient(90deg,#f8e9a8 0 75px,transparent 75px 145px);animation:lane 1.5s linear infinite}
+@keyframes lane{to{transform:translateX(-145px)}}
+.tree{position:absolute;z-index:7;bottom:31%;width:18px;height:130px;background:#5a371e}
+.tree:before{content:"";position:absolute;left:-45px;top:-45px;width:105px;height:105px;border-radius:50%;background:#3f8e3e;box-shadow:25px 10px 0 #4c9a42,-25px 15px 0 #468f3c}
+.tre1{left:8%}.tre2{right:8%;transform:scale(1.25)}
+
+/* HERO CART - colorful delivery van */
+.van{position:absolute;z-index:22;left:-390px;bottom:28%;width:390px;height:190px;
+animation:van 10s linear infinite}
+@keyframes van{
+0%{transform:translateX(0) rotate(0)}
+28%{transform:translateX(48vw) rotate(0)}
+35%{transform:translateX(57vw) rotate(-2deg)}
+43%{transform:translateX(65vw) rotate(3deg)}
+72%{transform:translateX(120vw) rotate(-1deg)}
+100%{transform:translateX(155vw)}
+}
+.vbody{position:absolute;left:20px;bottom:24px;width:350px;height:125px;border-radius:28px 35px 12px 12px;
+background:linear-gradient(#ff6957,#ef463d);border:6px solid #9d302b;box-shadow:inset 0 -20px 25px rgba(0,0,0,.12)}
+.roof{position:absolute;left:75px;top:-12px;width:210px;height:20px;border-radius:15px;background:#ffd052;border:5px solid #9d302b}
+.windshield{position:absolute;right:36px;top:27px;width:88px;height:54px;border-radius:9px 18px 6px 6px;background:linear-gradient(135deg,#b9ecf5,#5aa7bf);border:5px solid #6f2b29}
+.windshield:after{content:"";position:absolute;left:42px;top:0;bottom:0;width:4px;background:#6f2b29}
+.sidewindow{position:absolute;left:50px;top:28px;width:100px;height:52px;border-radius:8px;background:#b9ecf5;border:5px solid #6f2b29}
+.logo{position:absolute;left:73px;top:91px;width:170px;height:40px;border-radius:12px;background:#fff5d0;color:#e84c3f;
+font-weight:900;font-size:22px;text-align:center;padding-top:6px;transform:rotate(-2deg)}
+.bumper{position:absolute;right:10px;bottom:18px;width:24px;height:17px;border-radius:8px;background:#333}
+.headlight{position:absolute;right:13px;bottom:52px;width:18px;height:18px;border-radius:50%;background:#fff6a9;box-shadow:0 0 22px 7px #fff2a0}
+.wheel{position:absolute;bottom:0;width:62px;height:62px;border-radius:50%;background:#1e2221;border:10px solid #111;animation:wheel .55s linear infinite}
+.wheel:after{content:"";position:absolute;left:13px;top:13px;width:16px;height:16px;border-radius:50%;background:#a7aba5}
+.wh1{left:52px}.wh2{right:45px}
+@keyframes wheel{to{transform:rotate(360deg)}}
+
+/* CARTON FLYING OUT */
+.carton{position:absolute;z-index:28;left:calc(50% - 45px);bottom:48%;width:72px;height:58px;background:#d89543;border:5px solid #86501e;
+animation:carton 10s linear infinite}
+.carton:before{content:"";position:absolute;left:8px;right:8px;top:18px;height:4px;background:#8a531f}
+.carton:after{content:"★";position:absolute;left:23px;top:20px;font-size:22px;color:#ffe3a1}
+@keyframes carton{
+0%,30%{transform:translate(0,0) rotate(0);opacity:0}
+33%{opacity:1}
+42%{transform:translate(18vw,-17vh) rotate(250deg)}
+50%{transform:translate(29vw,2vh) rotate(500deg)}
+57%{transform:translate(39vw,-12vh) rotate(720deg)}
+65%{transform:translate(50vw,20vh) rotate(900deg);opacity:1}
+70%,100%{transform:translate(70vw,50vh) rotate(1100deg);opacity:0}
+}
+
+/* RIDER / DRIVER — intentionally expressive */
+.rider{position:absolute;z-index:27;left:calc(50% + 45px);bottom:42%;width:100px;height:145px;
+animation:rider 10s linear infinite}
+@keyframes rider{
+0%,28%{transform:translateX(-60vw) rotate(0);opacity:0}
+32%{opacity:1}
+36%{transform:translateX(-12vw) rotate(0)}
+41%{transform:translateX(-5vw) rotate(-13deg)}
+45%{transform:translateX(3vw) rotate(18deg)}
+50%{transform:translateX(11vw) rotate(-22deg)}
+56%{transform:translateX(18vw) rotate(28deg)}
+65%{transform:translateX(30vw) rotate(-10deg)}
+75%{transform:translateX(55vw) rotate(5deg);opacity:1}
+82%,100%{transform:translateX(90vw) rotate(0);opacity:0}
+}
+.rhead{position:absolute;left:32px;top:4px;width:38px;height:38px;border-radius:50%;background:#f2aa82;border:4px solid #794a3e}
+.eye{position:absolute;top:17px;width:7px;height:9px;border-radius:50%;background:#171717}
+.eye.e1{left:42px}.eye.e2{left:59px}
+.mouth{position:absolute;left:43px;top:28px;width:23px;height:13px;border-bottom:5px solid #202020;border-radius:0 0 25px 25px}
+.rbody{position:absolute;left:27px;top:40px;width:50px;height:58px;border-radius:16px;background:#4e73d6;border:4px solid #2e478d}
+.arm{position:absolute;top:48px;width:46px;height:11px;border-radius:10px;background:#f2aa82;border:3px solid #794a3e}
+.a1{left:-11px;transform:rotate(-32deg)}.a2{right:-15px;transform:rotate(50deg)}
+.leg{position:absolute;top:94px;width:15px;height:48px;border-radius:10px;background:#272d3c}
+.l1{left:31px;transform:rotate(14deg)}.l2{left:61px;transform:rotate(-22deg)}
+
+/* banana + pigeons + chaos */
+.banana{position:absolute;z-index:19;bottom:31%;left:47%;width:60px;height:33px;border-bottom:10px solid #f5d13c;border-radius:50%;transform:rotate(-20deg);animation:ban 2.5s ease-in-out infinite}
+.banana:before,.banana:after{content:"";position:absolute;width:28px;height:18px;border-bottom:9px solid #f5d13c;border-radius:50%}
+.banana:before{left:-4px;top:-9px;transform:rotate(-30deg)}.banana:after{right:-3px;top:-8px;transform:rotate(30deg)}
+@keyframes ban{50%{transform:rotate(18deg) translateY(-8px)}}
+.pigeon{position:absolute;z-index:18;width:44px;height:24px}
+.pigeon:before,.pigeon:after{content:"";position:absolute;width:22px;height:12px;border-top:5px solid #444;top:6px}
+.pigeon:before{left:0;transform:rotate(18deg)}.pigeon:after{right:0;transform:rotate(-18deg)}
+.pg1{left:25%;bottom:40%;animation:pg 5s linear infinite}.pg2{left:70%;bottom:45%;animation:pg 7s linear infinite reverse}
+@keyframes pg{to{transform:translate(55vw,-20vh)}}
+
+/* wind lines */
+.wind{position:absolute;z-index:40;inset:0;pointer-events:none}
+.gust{position:absolute;width:170px;height:3px;background:linear-gradient(90deg,transparent,#fff8d8,transparent);opacity:.5;animation:gust 2s linear infinite}
+.g1{top:39%;left:-180px}.g2{top:48%;left:-280px;animation-delay:.7s}.g3{top:28%;left:-350px;animation-delay:1.3s}
+@keyframes gust{to{transform:translateX(130vw) rotate(-3deg)}}
+
+/* comic impact stars */
+.starburst{position:absolute;z-index:50;left:65%;bottom:43%;font-size:54px;color:#ffd83d;text-shadow:3px 3px #e44b3d;animation:burst 10s infinite}
+@keyframes burst{0%,35%,100%{opacity:0;transform:scale(.2) rotate(0)}42%{opacity:1;transform:scale(1.25) rotate(20deg)}48%{opacity:0;transform:scale(.5) rotate(60deg)}}
+
+/* foreground sign */
+.sign{position:absolute;z-index:12;right:4%;bottom:28%;width:110px;height:82px;background:#f7d65b;border:5px solid #725b25;
+transform:rotate(5deg);box-shadow:5px 8px 0 rgba(0,0,0,.12)}
+.sign:before{content:"SLOW";position:absolute;left:13px;top:17px;font-size:24px;font-weight:900;color:#333;transform:rotate(-5deg)}
+.sign:after{content:"!!!";position:absolute;right:12px;bottom:9px;font-size:18px;font-weight:900;color:#e74d3d}
+
+/* confetti / particles */
+.confetti{position:absolute;z-index:60;inset:0;pointer-events:none}
+.c{position:absolute;width:8px;height:15px;animation:fall 4s linear infinite}
+@keyframes fall{to{transform:translateY(115vh) rotate(720deg)}}
+.vignette{position:absolute;z-index:100;inset:0;pointer-events:none;box-shadow:inset 0 0 100px rgba(0,0,0,.12)}
+</style>
+</head>
+<body>
+<div class="scene">
+<div class="sun"></div>
+<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+
+<div class="city">
+ <div class="b b1"><i class="window"></i><i class="window"></i></div>
+ <div class="b b2"><i class="window"></i><i class="window"></i><i class="window"></i></div>
+ <div class="b b3"><i class="window"></i><i class="window"></i></div>
+ <div class="b b4"><i class="window"></i><i class="window"></i></div>
+ <div class="b b5"><i class="window"></i><i class="window"></i><i class="window"></i></div>
+ <div class="b b6"><i class="window"></i><i class="window"></i></div>
+</div>
+
+<div class="tree tre1"></div><div class="tree tre2"></div>
+<div class="sidewalk"></div><div class="road"></div><div class="lane"></div>
+
+<div class="sign"></div><div class="banana"></div>
+<div class="pigeon pg1"></div><div class="pigeon pg2"></div>
+
+<div class="van">
+ <div class="vbody"></div><div class="roof"></div><div class="sidewindow"></div><div class="windshield"></div>
+ <div class="logo">OH NO!</div><div class="bumper"></div><div class="headlight"></div>
+ <i class="wheel wh1"></i><i class="wheel wh2"></i>
+</div>
+
+<div class="rider">
+ <div class="rhead"></div><i class="eye e1"></i><i class="eye e2"></i><div class="mouth"></div>
+ <div class="rbody"></div><i class="arm a1"></i><i class="arm a2"></i><i class="leg l1"></i><i class="leg l2"></i>
+</div>
+
+<div class="carton"></div>
+<div class="starburst">★</div>
+
+<div class="wind"><i class="gust g1"></i><i class="gust g2"></i><i class="gust g3"></i></div>
+<div class="confetti" id="confetti"></div>
+<div class="vignette"></div>
+</div>
+
+<script>
+const conf=document.getElementById('confetti');
+const colors=['#ef5145','#ffd33d','#4c82e8','#58c982','#ec72bb','#8d63df'];
+for(let i=0;i<55;i++){
+ const e=document.createElement('i');e.className='c';
+ e.style.left=Math.random()*100+'%';
+ e.style.top=(-Math.random()*100)+'%';
+ e.style.background=colors[Math.floor(Math.random()*colors.length)];
+ e.style.animationDelay=(-Math.random()*5)+'s';
+ e.style.animationDuration=(3+Math.random()*3)+'s';
+ e.style.transform='rotate('+Math.random()*360+'deg)';
+ conf.appendChild(e);
+}
+</script>
+</body>
+</html>

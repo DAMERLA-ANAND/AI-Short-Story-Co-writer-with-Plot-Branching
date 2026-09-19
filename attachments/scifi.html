@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Deep Space</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#010208}
+body{font-family:Arial,sans-serif}
+.scene{position:relative;width:100vw;height:100vh;overflow:hidden;
+background:
+radial-gradient(circle at 52% 48%,rgba(15,74,130,.22),transparent 25%),
+radial-gradient(circle at 15% 70%,rgba(100,20,180,.10),transparent 28%),
+linear-gradient(#01030a,#020713 55%,#010207)}
+canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.stars{position:absolute;inset:0;z-index:2}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#d8faff;
+box-shadow:0 0 7px #42dfff;animation:twinkle 2s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.12;transform:scale(.2)}}
+
+.nebula{position:absolute;left:50%;top:45%;width:90vmin;height:90vmin;z-index:0;
+transform:translate(-50%,-50%);border-radius:50%;
+background:conic-gradient(from 0deg,transparent,#00d9ff18,transparent,#8b35ff1b,transparent);
+filter:blur(30px);animation:nebula 20s linear infinite}
+@keyframes nebula{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+.planet{position:absolute;right:-11vw;top:6vh;width:29vw;height:29vw;min-width:220px;min-height:220px;
+border-radius:50%;z-index:2;
+background:radial-gradient(circle at 32% 27%,#617994,#263b56 42%,#0a111e 72%,#02040a 100%);
+box-shadow:-25px 10px 100px rgba(55,160,255,.16),inset 25px -25px 80px #000;
+opacity:.85}
+.planet:after{content:"";position:absolute;inset:5%;border-radius:50%;
+background:repeating-linear-gradient(18deg,transparent 0 19px,rgba(130,190,220,.055) 20px 23px);
+transform:rotate(-20deg)}
+
+.grid{position:absolute;left:-25%;bottom:-34%;width:150%;height:68%;z-index:3;
+background:linear-gradient(rgba(0,210,255,.10) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,210,255,.10) 1px,transparent 1px);
+background-size:75px 38px;transform:perspective(360px) rotateX(62deg);
+mask-image:linear-gradient(to top,black,transparent 75%);animation:gridMove 3s linear infinite}
+@keyframes gridMove{to{background-position:0 38px,75px 0}}
+
+.core{position:absolute;left:50%;top:50%;width:30px;height:30px;z-index:6;
+transform:translate(-50%,-50%);border-radius:50%;background:#efffff;
+box-shadow:0 0 15px 5px #48eaff,0 0 80px 30px rgba(0,160,255,.65);
+animation:core 1.4s ease-in-out infinite}
+@keyframes core{50%{transform:translate(-50%,-50%) scale(1.7);opacity:.7}}
+
+.energyRing{position:absolute;left:50%;top:50%;z-index:5;border-radius:50%;
+transform:translate(-50%,-50%);border:1px solid rgba(50,220,255,.25);animation:spin linear infinite}
+.energyRing:nth-child(1){width:250px;height:250px;animation-duration:6s}
+.energyRing:nth-child(2){width:390px;height:390px;animation-duration:10s;animation-direction:reverse}
+.energyRing:nth-child(3){width:570px;height:570px;animation-duration:16s}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* Realistic-looking procedural spacecraft */
+.ship{position:absolute;z-index:12;width:220px;height:90px;filter:drop-shadow(0 0 12px rgba(50,210,255,.35));
+animation:fly 13s linear infinite}
+.ship.s2{animation-delay:-6.5s;transform:scale(.62)}
+.hull{position:absolute;left:35px;top:28px;width:125px;height:38px;
+background:linear-gradient(180deg,#bfcbd3 0%,#4e6472 20%,#17252e 58%,#080d12 100%);
+clip-path:polygon(0 50%,13% 17%,68% 5%,100% 50%,68% 95%,13% 83%);
+box-shadow:inset 0 4px 5px rgba(255,255,255,.25)}
+.hull:after{content:"";position:absolute;left:22px;top:9px;width:76px;height:8px;
+background:linear-gradient(90deg,#273c48,#9aaab2,#263943);clip-path:polygon(0 50%,8% 0,92% 0,100% 50%,92% 100%,8% 100%)}
+.cockpit{position:absolute;left:78px;top:24px;width:47px;height:18px;
+background:linear-gradient(145deg,#dffaff,#1599c7 35%,#041a2b 80%);
+clip-path:polygon(0 50%,18% 0,80% 8%,100% 50%,80% 92%,18% 100%);
+box-shadow:0 0 12px rgba(30,210,255,.5)}
+.wing{position:absolute;top:49px;width:72px;height:31px;background:linear-gradient(135deg,#1b2a34,#071016);
+clip-path:polygon(0 0,100% 20%,68% 100%,17% 70%)}
+.wing.l{left:24px}.wing.r{right:30px;transform:scaleX(-1)}
+.fin{position:absolute;left:86px;top:13px;width:35px;height:23px;background:#172630;
+clip-path:polygon(0 100%,35% 0,100% 100%)}
+.engine{position:absolute;left:21px;top:34px;width:30px;height:25px;border-radius:50%;
+background:radial-gradient(circle,#fff 0,#57eaff 12%,#007cff 30%,transparent 70%);
+filter:blur(.5px);box-shadow:0 0 20px #00bfff}
+.engine2{left:31px;top:39px;width:20px;height:16px}
+.exhaust{position:absolute;left:-80px;top:40px;width:105px;height:12px;
+background:linear-gradient(90deg,transparent,rgba(30,140,255,.08),#25dfff,#fff,#25dfff,transparent);
+filter:blur(4px);animation:exhaust .35s ease-in-out infinite alternate}
+.exhaust:after{content:"";position:absolute;left:0;top:-5px;width:85px;height:22px;
+background:linear-gradient(90deg,transparent,#237cff55,transparent);filter:blur(7px)}
+@keyframes exhaust{to{width:130px;opacity:.65;transform:scaleY(1.3)}}
+.nav{position:absolute;right:26px;top:25px;width:5px;height:5px;border-radius:50%;
+background:#ff334e;box-shadow:0 0 8px #ff334e;animation:blink .8s infinite}
+@keyframes blink{50%{opacity:.1}}
+@keyframes fly{
+0%{left:-25%;top:72%;transform:rotate(-8deg) scale(.72);opacity:0}
+7%{opacity:1}30%{left:22%;top:58%;transform:rotate(-2deg) scale(.85)}
+55%{left:52%;top:31%;transform:rotate(7deg) scale(1)}
+78%{left:76%;top:19%;transform:rotate(2deg) scale(.9)}
+100%{left:120%;top:2%;transform:rotate(-6deg) scale(.7);opacity:0}
+}
+
+/* Asteroids */
+.asteroid{position:absolute;z-index:9;width:var(--size);height:var(--size);border-radius:44% 56% 50% 42%;
+background:radial-gradient(circle at 28% 24%,#9da4aa,#465059 45%,#141b20 78%);
+box-shadow:inset -9px -9px 13px #070a0d,0 0 8px rgba(100,140,170,.15);
+animation:asteroid var(--dur) linear infinite}
+.asteroid:before,.asteroid:after{content:"";position:absolute;border-radius:50%;background:#1b2228}
+.asteroid:before{width:24%;height:24%;left:22%;top:22%}.asteroid:after{width:17%;height:17%;left:62%;top:55%}
+@keyframes asteroid{
+0%{transform:translate(0,0) rotate(0) scale(.25);opacity:0}
+8%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(600deg) scale(1);opacity:0}
+}
+
+/* plasma arcs around core */
+.particle{position:absolute;left:50%;top:50%;z-index:8;width:3px;height:3px;border-radius:50%;
+background:#75f4ff;box-shadow:0 0 9px #00dfff;animation:burst 5s ease-out infinite;--x:100px;--y:0}
+@keyframes burst{0%,52%{transform:translate(-50%,-50%) scale(.1);opacity:0}
+60%{opacity:1}100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(0);opacity:0}}
+
+.flash{position:absolute;z-index:20;left:50%;top:50%;width:10px;height:10px;border-radius:50%;
+background:white;box-shadow:0 0 30px 10px #baf8ff,0 0 120px 35px #008cff;
+animation:flash 8s ease-in-out infinite;opacity:0}
+@keyframes flash{0%,72%,100%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+75%{opacity:1;transform:translate(-50%,-50%) scale(4)}80%{opacity:0}}
+
+.vignette{position:absolute;inset:0;z-index:30;pointer-events:none;
+background:radial-gradient(circle,transparent 25%,rgba(0,0,0,.74) 100%)}
+</style>
+</head>
+<body>
+<div class="scene">
+<canvas id="space"></canvas>
+<div class="nebula"></div>
+<div class="planet"></div>
+<div class="stars" id="stars"></div>
+<div class="grid"></div>
+
+<div class="core"></div>
+
+<div class="ship">
+<div class="exhaust"></div><div class="hull"></div><div class="cockpit"></div>
+<div class="wing l"></div><div class="wing r"></div><div class="fin"></div>
+<div class="engine"></div><div class="engine engine2"></div><div class="nav"></div>
+</div>
+<div class="ship s2">
+<div class="exhaust"></div><div class="hull"></div><div class="cockpit"></div>
+<div class="wing l"></div><div class="wing r"></div><div class="fin"></div>
+<div class="engine"></div><div class="engine engine2"></div><div class="nav"></div>
+</div>
+
+<div id="asteroids"></div><div id="particles"></div><div class="flash"></div>
+<div class="vignette"></div>
+</div>
+
+<script>
+const stars=document.getElementById("stars");
+for(let i=0;i<210;i++){
+ const s=document.createElement("div");s.className="star";
+ s.style.left=Math.random()*100+"%";s.style.top=Math.random()*100+"%";
+ s.style.opacity=.1+Math.random()*.8;s.style.animationDelay=Math.random()*3+"s";
+ s.style.animationDuration=1+Math.random()*3+"s";stars.appendChild(s)
+}
+const ast=document.getElementById("asteroids");
+for(let i=0;i<24;i++){
+ const a=document.createElement("div");a.className="asteroid";
+ const side=Math.random()<.5?-1:1;
+ a.style.setProperty("--size",(12+Math.random()*65)+"px");
+ a.style.setProperty("--dx",(side*(300+Math.random()*1100))+"px");
+ a.style.setProperty("--dy",(-350+Math.random()*800)+"px");
+ a.style.setProperty("--dur",(4+Math.random()*9)+"s");
+ a.style.left=Math.random()*100+"%";a.style.top=Math.random()*100+"%";
+ a.style.animationDelay=(-Math.random()*12)+"s";ast.appendChild(a)
+}
+const particles=document.getElementById("particles");
+for(let i=0;i<100;i++){
+ const p=document.createElement("div");p.className="particle";
+ const ang=Math.random()*Math.PI*2,r=150+Math.random()*500;
+ p.style.setProperty("--x",Math.cos(ang)*r+"px");
+ p.style.setProperty("--y",Math.sin(ang)*r+"px");
+ p.style.animationDelay=(-Math.random()*5)+"s";particles.appendChild(p)
+}
+const c=document.getElementById("space"),ctx=c.getContext("2d");
+function resize(){c.width=innerWidth*devicePixelRatio;c.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+resize();addEventListener("resize",resize);
+const dust=Array.from({length:100},()=>({a:Math.random()*6.28,r:180+Math.random()*520,z:.3+Math.random()*1.5}));
+function loop(){
+ ctx.clearRect(0,0,innerWidth,innerHeight);
+ const cx=innerWidth/2,cy=innerHeight/2;
+ for(const p of dust){
+   p.a+=.0015+p.z*.0005;
+   const x=cx+Math.cos(p.a)*p.r,y=cy+Math.sin(p.a)*p.r*.55;
+   ctx.fillStyle=`rgba(70,220,255,${.08+p.z*.08})`;
+   ctx.beginPath();ctx.arc(x,y,p.z,0,6.28);ctx.fill();
+ }
+ requestAnimationFrame(loop)
+}
+loop();
+</script>
+</body>
+</html>

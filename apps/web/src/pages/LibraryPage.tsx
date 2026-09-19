@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import type { StorySnapshotSummaryDto, GenreId } from '@plotweaver/shared';
 import { GENRE_REGISTRY, GENRE_IDS } from '@plotweaver/shared';
 import { listSnapshots, forkSnapshot, deleteSnapshot, getExportUrl } from '../api/snapshots.js';
-import { listStories } from '../api/stories.js';
+import { listStories, deleteStory } from '../api/stories.js';
 import { StudioNavbar } from '../components/layout/StudioNavbar.js';
 import { CinematicBackground } from '../components/atmosphere/CinematicBackground.js';
 import { ForkModal } from '../components/workspace/ForkModal.js';
@@ -77,6 +77,20 @@ export const LibraryPage: React.FC = () => {
     }
   };
 
+  const handleDeleteStory = async (e: React.MouseEvent, storyId: string) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this story and all its branches from the vault?')) return;
+    setDeletingId(storyId);
+    try {
+      await deleteStory(storyId);
+      setLiveStories(prev => prev.filter(s => s.id !== storyId));
+    } catch (err: any) {
+      alert(`Failed to delete story: ${err?.message || err}`);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const handleDownload = (storyId: string, format: 'markdown' | 'pdf') => {
     const url = getExportUrl(storyId, format);
     const link = document.createElement('a');
@@ -101,7 +115,16 @@ export const LibraryPage: React.FC = () => {
   }, [snapshots, searchQuery, selectedGenreFilter]);
 
   const filteredStories = useMemo(() => {
-    return liveStories.filter(s => {
+    const seenTitles = new Set<string>();
+    const uniqueStories = liveStories.filter(s => {
+      const normalizedTitle = (s.title || '').trim().toLowerCase();
+      if (!normalizedTitle) return true;
+      if (seenTitles.has(normalizedTitle)) return false;
+      seenTitles.add(normalizedTitle);
+      return true;
+    });
+
+    return uniqueStories.filter(s => {
       const matchesSearch =
         searchQuery.trim() === '' ||
         s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -639,6 +662,19 @@ export const LibraryPage: React.FC = () => {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; e.currentTarget.style.color = 'var(--theme-muted, #94a3b8)'; }}
                       >
                         <FileText size={14} />
+                      </button>
+                      <button
+                        onClick={(e) => handleDeleteStory(e, story.id)}
+                        disabled={deletingId === story.id}
+                        title="Delete Story"
+                        style={{
+                          ...actionBtnIcon,
+                          color: deletingId === story.id ? '#f87171' : 'var(--theme-muted, #94a3b8)',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)'; e.currentTarget.style.color = '#f87171'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; e.currentTarget.style.color = 'var(--theme-muted, #94a3b8)'; }}
+                      >
+                        {deletingId === story.id ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <Trash2 size={14} />}
                       </button>
                     </div>
                   </div>

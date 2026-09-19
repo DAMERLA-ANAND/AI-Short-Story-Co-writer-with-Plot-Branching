@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Detective Noir</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#050607}
+body{font-family:Georgia,serif}
+.scene{position:relative;width:100vw;height:100vh;overflow:hidden;
+background:radial-gradient(ellipse at 52% 48%,#202325 0%,#0c0f10 38%,#030405 100%)}
+.noise{position:absolute;inset:-50%;opacity:.07;pointer-events:none;z-index:20;
+background-image:radial-gradient(#fff .6px,transparent .7px);background-size:4px 4px;
+animation:grain .15s steps(2) infinite}
+@keyframes grain{to{transform:translate(3%,2%)}}
+
+.window{position:absolute;left:9%;top:7%;width:42%;height:66%;
+border:5px solid #101314;background:linear-gradient(110deg,rgba(80,90,90,.13),rgba(5,7,8,.55));
+box-shadow:inset 0 0 60px #000,0 0 30px #000}
+.window:before,.window:after{content:"";position:absolute;background:#121516}
+.window:before{width:7px;height:100%;left:50%;transform:translateX(-50%)}
+.window:after{height:7px;width:100%;top:50%;transform:translateY(-50%)}
+.rain{position:absolute;inset:0;overflow:hidden}
+.drop{position:absolute;top:-50px;width:2px;height:70px;
+background:linear-gradient(transparent,rgba(210,220,220,.45));transform:rotate(13deg);
+animation:rain linear infinite}
+@keyframes rain{to{transform:translate(-120px,115vh) rotate(13deg)}}
+
+.city{position:absolute;bottom:27%;left:0;width:100%;height:26%;opacity:.7}
+.build{position:absolute;bottom:0;background:#07090a;border-top:1px solid #252a2b}
+.light{position:absolute;width:4px;height:7px;background:#c4a85f;box-shadow:0 0 8px #a88d4d;opacity:.35;animation:flicker 4s infinite}
+@keyframes flicker{0%,90%,100%{opacity:.2}92%{opacity:.8}95%{opacity:.25}}
+
+.lamp{position:absolute;right:14%;top:14%;width:6px;height:55%;background:#111415}
+.lamp:before{content:"";position:absolute;top:-7px;left:-20px;width:42px;height:13px;border-radius:50%;
+background:#d3b66c;box-shadow:0 0 25px 10px rgba(210,180,90,.2)}
+.lamp:after{content:"";position:absolute;top:0;left:-180px;width:370px;height:350px;
+background:radial-gradient(ellipse at top,rgba(210,185,100,.09),transparent 62%);filter:blur(4px)}
+
+.desk{position:absolute;bottom:0;right:0;width:55%;height:25%;background:linear-gradient(#151819,#070809);
+transform:skewX(-8deg);box-shadow:0 -10px 30px #000}
+.paper{position:absolute;width:170px;height:115px;background:#c8c2ad;left:55%;top:66%;
+transform:rotate(-7deg);box-shadow:0 5px 18px #000;opacity:.85}
+.paper:before{content:"";position:absolute;left:18px;right:18px;top:25px;height:2px;
+background:#6e6a5d;box-shadow:0 15px #6e6a5d,0 30px #6e6a5d,0 45px #6e6a5d}
+.photo{position:absolute;width:95px;height:75px;left:67%;top:61%;background:#16191a;
+border:7px solid #b9b39e;transform:rotate(9deg);box-shadow:0 5px 20px #000}
+.photo:after{content:"";position:absolute;left:30%;top:20%;width:35px;height:45px;
+border-radius:50% 50% 42% 42%;background:#25292a;box-shadow:0 30px 0 -7px #25292a}
+
+.pinboard{position:absolute;right:6%;top:8%;width:32%;height:52%;background:#171313;
+border:12px solid #211c18;box-shadow:0 15px 45px #000}
+.pin{position:absolute;width:12px;height:12px;border-radius:50%;background:#d12d32;
+box-shadow:0 0 12px #d12d32}
+.pin:nth-child(1){left:18%;top:20%}.pin:nth-child(2){left:72%;top:31%}
+.pin:nth-child(3){left:43%;top:72%}.pin:nth-child(4){left:82%;top:78%}
+.string{position:absolute;height:2px;background:#a5262b;transform-origin:left center;box-shadow:0 0 5px #8d1f24}
+.s1{left:20%;top:22%;width:55%;transform:rotate(11deg)}
+.s2{left:44%;top:73%;width:42%;transform:rotate(8deg)}
+.s3{left:45%;top:72%;width:31%;transform:rotate(-47deg)}
+
+.detective{position:absolute;left:39%;bottom:19%;width:145px;height:390px;z-index:7;
+animation:walk 7s ease-in-out infinite}
+.head{position:absolute;left:48px;top:0;width:55px;height:70px;border-radius:48% 48% 42% 42%;background:#080909}
+.hat{position:absolute;left:25px;top:-15px;width:105px;height:25px;border-radius:50%;background:#050606;
+box-shadow:0 10px 0 -5px #080909}
+.body{position:absolute;left:20px;top:62px;width:105px;height:230px;
+background:linear-gradient(90deg,#050606,#111313,#050606);clip-path:polygon(25% 0,78% 0,100% 100%,0 100%)}
+.arm{position:absolute;top:75px;width:34px;height:190px;background:#080909;border-radius:20px}
+.arm.l{left:4px;transform:rotate(9deg)}.arm.r{right:0;transform:rotate(-12deg)}
+.leg{position:absolute;top:270px;width:43px;height:145px;background:#050606}
+.leg.l{left:27px;transform:rotate(5deg)}.leg.r{left:76px;transform:rotate(-5deg)}
+@keyframes walk{0%,100%{transform:translateX(-25px)}50%{transform:translateX(35px)}}
+
+.flashlight{position:absolute;left:46%;bottom:35%;width:25px;height:25px;border-radius:50%;
+background:#e7e1c5;box-shadow:0 0 15px 5px #eee4bd;z-index:8;
+animation:flash 7s ease-in-out infinite}
+.flashlight:after{content:"";position:absolute;left:-150px;top:-170px;width:340px;height:220px;
+background:linear-gradient(145deg,rgba(235,230,200,.12),transparent 55%);filter:blur(7px);
+transform-origin:bottom right;animation:beam 7s ease-in-out infinite}
+@keyframes beam{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(25deg)}}
+@keyframes flash{50%{transform:translate(20px,-8px)}}
+
+.fog{position:absolute;left:-20%;bottom:13%;width:140%;height:30%;
+background:radial-gradient(ellipse at 30% 50%,rgba(190,195,190,.09),transparent 35%),
+radial-gradient(ellipse at 70% 40%,rgba(190,195,190,.08),transparent 40%);
+filter:blur(15px);animation:fog 13s ease-in-out infinite alternate}
+@keyframes fog{to{transform:translateX(10%)}}
+.vignette{position:absolute;inset:0;z-index:30;pointer-events:none;
+background:radial-gradient(ellipse,transparent 25%,rgba(0,0,0,.78) 100%)}
+</style>
+</head>
+<body>
+<div class="scene">
+<div class="window"><div class="rain" id="rain"></div></div>
+<div class="city" id="city"></div>
+<div class="lamp"></div>
+<div class="pinboard">
+<div class="pin"></div><div class="pin"></div><div class="pin"></div><div class="pin"></div>
+<div class="string s1"></div><div class="string s2"></div><div class="string s3"></div>
+</div>
+<div class="desk"></div><div class="paper"></div><div class="photo"></div>
+<div class="detective"><div class="hat"></div><div class="head"></div><div class="body"></div>
+<div class="arm l"></div><div class="arm r"></div><div class="leg l"></div><div class="leg r"></div></div>
+<div class="flashlight"></div><div class="fog"></div><div class="noise"></div><div class="vignette"></div>
+</div>
+<script>
+const rain=document.getElementById("rain");
+for(let i=0;i<130;i++){let d=document.createElement("div");d.className="drop";
+d.style.left=Math.random()*110+"%";d.style.animationDuration=.55+Math.random()*.8+"s";
+d.style.animationDelay=-Math.random()*3+"s";d.style.opacity=.15+Math.random()*.5;rain.appendChild(d)}
+const city=document.getElementById("city");
+for(let i=0;i<14;i++){let b=document.createElement("div");b.className="build";
+b.style.left=(i*7.5+Math.random()*2)+"%";b.style.width=(5+Math.random()*5)+"%";
+b.style.height=(35+Math.random()*65)+"%";
+for(let j=0;j<Math.floor(2+Math.random()*5);j++){let l=document.createElement("i");l.className="light";
+l.style.left=Math.random()*75+"%";l.style.top=(10+Math.random()*70)+"%";l.style.animationDelay=Math.random()*5+"s";b.appendChild(l)}
+city.appendChild(b)}
+</script>
+</body>
+</html>

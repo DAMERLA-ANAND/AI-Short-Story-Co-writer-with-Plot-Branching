@@ -8,6 +8,7 @@ import {
   handleSetActiveScene,
   handleStoreSnapshot,
   handleExportStory,
+  handleDeleteStory,
 } from '../controllers/story.controller.js';
 import { optionalAuth } from '../middleware/auth.middleware.js';
 
@@ -18,6 +19,7 @@ storyRouter.use(optionalAuth);
 storyRouter.get('/', handleListStories);
 storyRouter.post('/', handleCreateStory);
 storyRouter.get('/:storyId', handleGetStory);
+storyRouter.delete('/:storyId', handleDeleteStory);
 storyRouter.post('/:storyId/continue', handleContinueStory);
 storyRouter.post('/:storyId/continue/stream', handleContinueStoryStream);
 storyRouter.post('/:storyId/active-scene', handleSetActiveScene);

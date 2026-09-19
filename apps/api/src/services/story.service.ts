@@ -169,3 +169,19 @@ export async function listStories(options?: { userId?: string; publicOnly?: bool
   });
 }
 
+export async function deleteStory(storyId: string): Promise<void> {
+  const story = await prisma.story.findUnique({
+    where: { id: storyId },
+  });
+
+  if (!story) {
+    throw new Error(`Story not found: ${storyId}`);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.choice.deleteMany({ where: { storyId } });
+    await tx.scene.deleteMany({ where: { storyId } });
+    await tx.story.delete({ where: { id: storyId } });
+  });
+}
+

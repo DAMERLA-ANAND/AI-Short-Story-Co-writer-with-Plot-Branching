@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wooden Ship — Storm at Sea</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02070b}
+body{font-family:Georgia,serif}
+.scene{position:relative;width:100vw;height:100vh;overflow:hidden;background:
+ radial-gradient(ellipse at 50% 30%,rgba(86,111,119,.16),transparent 35%),
+ linear-gradient(#010407 0%,#050a0e 40%,#020609 58%,#000102 100%)}
+
+/* STORM SKY */
+.clouds{position:absolute;inset:-15%;filter:blur(14px);opacity:.9;animation:clouds 28s linear infinite}
+.cloud{position:absolute;width:46vw;height:15vh;border-radius:50%;background:#020508;box-shadow:0 0 65px 25px #010305}
+.cloud:before,.cloud:after{content:"";position:absolute;background:#020508;border-radius:50%}
+.cloud:before{width:48%;height:120%;left:15%;top:-45%}.cloud:after{width:55%;height:105%;right:0;top:-25%}
+.c1{top:4%;left:-10%}.c2{top:13%;left:34%;transform:scale(1.25)}.c3{top:25%;left:-20%;transform:scale(.9)}
+@keyframes clouds{to{transform:translateX(18vw)}}
+.moon{position:absolute;right:13%;top:12%;width:78px;height:78px;border-radius:50%;opacity:.12;
+background:radial-gradient(circle at 35% 32%,#9ca8a8,#4a5558 58%,#20282b);
+box-shadow:0 0 50px 15px rgba(180,211,217,.08)}
+.moon:after{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle at 28% 38%,rgba(40,48,50,.3) 0 8%,transparent 9%),radial-gradient(circle at 65% 65%,rgba(40,48,50,.2) 0 12%,transparent 13%)}
+.stars{position:absolute;inset:0}.star{position:absolute;width:2px;height:2px;background:#d7e6e7;border-radius:50%;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.05}}
+
+/* SEA */
+.horizon{position:absolute;top:45%;left:0;right:0;height:12%;background:linear-gradient(transparent,rgba(35,57,63,.10),transparent);filter:blur(7px)}
+.sea{position:absolute;inset:49% -8% -15%;background:
+ repeating-linear-gradient(175deg,transparent 0 17px,rgba(74,105,112,.075) 18px 20px,transparent 21px 39px),
+ linear-gradient(#031016,#02090e 48%,#000204)}
+.wave{position:absolute;width:120%;height:8vh;left:-10%;border-top:2px solid rgba(92,125,130,.13);border-radius:50%;animation:wave 4s ease-in-out infinite}
+.w1{top:3%}.w2{top:17%;animation-duration:5.5s;opacity:.7}.w3{top:32%;animation-duration:4.2s;opacity:.55}.w4{top:51%;animation-duration:6s;opacity:.4}.w5{top:72%;animation-duration:7s;opacity:.3}
+@keyframes wave{50%{transform:translateX(4%) scaleY(1.6)}}
+
+/* WIND — visible directional gusts that periodically change direction */
+.wind{position:absolute;z-index:12;inset:0;pointer-events:none;overflow:hidden}
+.gust{position:absolute;width:20vw;height:2px;background:linear-gradient(90deg,transparent,rgba(120,155,160,.18),transparent);filter:blur(.5px);animation:gustA 4s linear infinite}
+.g1{top:24%;left:-25%}.g2{top:31%;left:100%;animation:gustB 5s linear infinite}.g3{top:39%;left:-30%;animation-delay:1.2s}.g4{top:17%;left:105%;animation:gustB 6.2s linear infinite;animation-delay:1.5s}
+@keyframes gustA{0%{transform:translateX(0) rotate(8deg);opacity:0}15%{opacity:.7}100%{transform:translateX(150vw) rotate(8deg);opacity:0}}
+@keyframes gustB{0%{transform:translateX(0) rotate(-10deg);opacity:0}15%{opacity:.65}100%{transform:translateX(-150vw) rotate(-10deg);opacity:0}}
+
+/* WOODEN SHIP */
+.ship{position:absolute;z-index:20;left:50%;top:58%;width:470px;height:300px;transform:translate(-50%,-50%) rotate(-3deg);animation:ship 3.1s ease-in-out infinite;filter:drop-shadow(0 24px 20px rgba(0,0,0,.65))}
+@keyframes ship{0%,100%{transform:translate(-50%,-50%) rotate(-3deg) translateY(0)}50%{transform:translate(-50%,-47%) rotate(5deg) translateY(8px)}}
+.hull{position:absolute;left:25px;bottom:32px;width:420px;height:105px;
+background:linear-gradient(180deg,#3c2011 0,#241209 38%,#0b0604 100%);
+clip-path:polygon(0 0,100% 0,91% 30%,80% 82%,70% 100%,17% 100%,7% 65%);
+border-top:8px solid #5b3219;box-shadow:inset 0 -12px 20px rgba(0,0,0,.55)}
+.hull:before{content:"";position:absolute;inset:15px 18px 13px 20px;border-top:3px solid rgba(205,139,75,.5);border-bottom:3px solid rgba(25,12,7,.7)}
+.plank{position:absolute;height:3px;background:rgba(30,13,7,.7);width:360px;left:48px;bottom:54px}
+.p2{bottom:73px}.p3{bottom:91px}
+.keel{position:absolute;left:53px;bottom:25px;width:350px;height:18px;background:#24140d;border-radius:50%;transform:rotate(-2deg)}
+.deck{position:absolute;left:47px;bottom:125px;width:370px;height:18px;background:linear-gradient(#4c2916,#241209);border-radius:45% 35% 15% 15%;box-shadow:0 4px 6px #000}
+.deckline{position:absolute;left:75px;bottom:135px;width:310px;height:2px;background:rgba(210,145,76,.4)}
+.cabin{position:absolute;left:180px;bottom:140px;width:120px;height:70px;background:linear-gradient(115deg,#2d170c,#100906);
+border:5px solid #5a3018;border-bottom:9px solid #3a1f12;clip-path:polygon(4% 100%,4% 27%,22% 0,88% 0,100% 27%,100% 100%)}
+.cwin{position:absolute;bottom:168px;width:31px;height:22px;background:linear-gradient(135deg,#88a8aa,#183840);border:4px solid #382012;box-shadow:inset 0 0 7px #9ab4b4}
+.cw1{left:197px}.cw2{left:238px}.cw3{left:279px}
+.door{position:absolute;left:227px;bottom:140px;width:29px;height:48px;background:#29150c;border:4px solid #4c2814}
+.railing{position:absolute;left:58px;bottom:151px;width:330px;height:3px;background:#a86a39;box-shadow:0 0 2px #160b06}
+.post{position:absolute;bottom:132px;width:4px;height:23px;background:#563019}.r1{left:68px}.r2{left:120px}.r3{left:335px}.r4{left:383px}
+
+/* MAST + SAILS */
+.mast{position:absolute;z-index:3;left:124px;bottom:133px;width:13px;height:250px;background:linear-gradient(90deg,#170b06,#4c2813,#160a05);border-radius:5px;transform:rotate(-1deg);box-shadow:4px 0 5px rgba(0,0,0,.4)}
+.mastTop{position:absolute;left:126px;bottom:376px;width:8px;height:25px;background:#70401f}
+.cross{position:absolute;left:72px;bottom:312px;width:210px;height:9px;background:#32190b;transform:rotate(-2deg)}
+.sail{
+position:absolute;left:137px;bottom:187px;width:190px;height:143px;
+background:linear-gradient(135deg,rgba(91,88,72,.65),rgba(43,44,39,.72));
+clip-path:polygon(0 0,100% 15%,78% 100%,0 85%);
+box-shadow:inset 0 0 18px rgba(0,0,0,.35);transform-origin:left bottom;
+animation:sail 3.1s ease-in-out infinite}
+.sail:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(8deg,transparent 0 29px,rgba(12,11,9,.34) 30px 33px)}
+.sail2{left:5px;bottom:210px;width:120px;height:105px;transform:scaleX(-1);opacity:.75}
+@keyframes sail{0%,100%{transform:skewX(-3deg) rotate(0)}50%{transform:skewX(7deg) rotate(2deg)}}
+.rope{position:absolute;background:#8d6843;height:2px;transform-origin:left center;z-index:4}
+.rope1{left:132px;bottom:379px;width:235px;transform:rotate(18deg)}.rope2{left:132px;bottom:379px;width:190px;transform:rotate(155deg)}
+.flag{position:absolute;left:132px;bottom:376px;width:55px;height:24px;background:#261a12;clip-path:polygon(0 0,100% 25%,78% 55%,100% 85%,0 100%);animation:flag 1.2s ease-in-out infinite}
+@keyframes flag{50%{transform:skewX(18deg) scaleX(.72)}}
+
+/* PERSON */
+.person{position:absolute;z-index:25;left:50%;top:53%;width:30px;height:74px;transform:translate(-50%,-100%);animation:person 3.1s ease-in-out infinite}
+.head{position:absolute;left:9px;top:0;width:14px;height:14px;border-radius:50%;background:#111}
+.torso{position:absolute;left:7px;top:13px;width:17px;height:32px;background:#171b1b;border-radius:45% 45% 15% 15%}
+.arm{position:absolute;top:17px;width:25px;height:7px;background:#151817;border-radius:8px}.a1{left:-12px;transform:rotate(24deg)}.a2{right:-12px;transform:rotate(-26deg)}
+.leg{position:absolute;top:42px;width:8px;height:28px;background:#0d1111;border-radius:6px}.l1{left:7px;transform:rotate(8deg)}.l2{right:6px;transform:rotate(-10deg)}
+@keyframes person{50%{transform:translate(-50%,-100%) rotate(5deg)}}
+
+/* LIGHTNING + RAIN */
+.lightning{position:absolute;z-index:40;left:46%;top:2%;width:180px;height:47%;opacity:0}
+.bolt{position:absolute;inset:0;background:#efffff;clip-path:polygon(42% 0,64% 0,53% 29%,78% 29%,38% 59%,49% 59%,12% 100%,29% 55%,4% 55%,42% 28%);
+filter:drop-shadow(0 0 8px #e6fbff) drop-shadow(0 0 35px #b7edff)}
+.flash{animation:flash 8s infinite}
+@keyframes flash{0%,84%,100%{opacity:0}85%{opacity:1}86%{opacity:.08}87%{opacity:.8}88%,91%{opacity:0}89%{opacity:.45}}
+.rain{position:absolute;z-index:35;inset:0;overflow:hidden}
+.drop{position:absolute;top:-15%;width:1px;height:10vh;background:linear-gradient(transparent,rgba(120,165,173,.28));transform:rotate(15deg);animation:rain linear infinite}
+@keyframes rain{to{transform:translate(-20vw,125vh) rotate(15deg)}}
+.spray{position:absolute;z-index:18;left:0;right:0;top:47%;height:28%;background:radial-gradient(ellipse at 50% 10%,rgba(120,160,166,.08),transparent 58%);filter:blur(5px);animation:spray 2s ease-in-out infinite}
+@keyframes spray{50%{transform:translateY(-9px);opacity:.5}}
+.vignette{position:absolute;z-index:100;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,.52) 68%,rgba(0,0,0,.94))}
+</style>
+</head>
+<body>
+<div class="scene">
+ <div class="stars" id="stars"></div>
+ <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
+ <div class="moon"></div>
+ <div class="horizon"></div>
+ <div class="sea"><div class="wave w1"></div><div class="wave w2"></div><div class="wave w3"></div><div class="wave w4"></div><div class="wave w5"></div></div>
+ <div class="wind"><i class="gust g1"></i><i class="gust g2"></i><i class="gust g3"></i><i class="gust g4"></i></div>
+ <div class="ship">
+   <div class="hull"></div><div class="plank"></div><div class="plank p2"></div><div class="plank p3"></div><div class="keel"></div>
+   <div class="deck"></div><div class="deckline"></div>
+   <div class="cabin"></div><div class="cwin cw1"></div><div class="cwin cw2"></div><div class="cwin cw3"></div><div class="door"></div>
+   <div class="railing"></div><i class="post r1"></i><i class="post r2"></i><i class="post r3"></i><i class="post r4"></i>
+   <div class="mast"></div><div class="mastTop"></div><div class="cross"></div>
+   <div class="sail"></div><div class="sail sail2"></div><div class="rope rope1"></div><div class="rope rope2"></div><div class="flag"></div>
+ </div>
+ <div class="spray"></div>
+ <div class="lightning flash"><div class="bolt"></div></div>
+ <div class="rain" id="rain"></div>
+ <div class="vignette"></div>
+</div>
+<script>
+const stars=document.getElementById('stars');
+for(let i=0;i<100;i++){let e=document.createElement('i');e.className='star';e.style.left=Math.random()*100+'%';e.style.top=Math.random()*45+'%';e.style.animationDelay=Math.random()*4+'s';e.style.opacity=.1+Math.random()*.6;stars.appendChild(e)}
+const rain=document.getElementById('rain');
+for(let i=0;i<220;i++){let e=document.createElement('i');e.className='drop';e.style.left=Math.random()*115+'%';e.style.height=5+Math.random()*9+'vh';e.style.animationDuration=.35+Math.random()*.65+'s';e.style.animationDelay=-Math.random()*2+'s';e.style.opacity=.15+Math.random()*.6;rain.appendChild(e)}
+</script>
+</body>
+</html>

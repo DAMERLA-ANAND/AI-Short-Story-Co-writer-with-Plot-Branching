@@ -83,3 +83,12 @@ export async function setActiveScene(storyId: string, sceneId: string): Promise<
   });
   return handleResponse<StoryWorkspaceDto>(res);
 }
+
+export async function deleteStory(storyId: string): Promise<{ success: boolean; deletedStoryId: string }> {
+  const res = await fetch(`${BASE_URL}/${encodeURIComponent(storyId)}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  return handleResponse<{ success: boolean; deletedStoryId: string }>(res);
+}
+

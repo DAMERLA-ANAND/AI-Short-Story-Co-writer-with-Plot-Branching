@@ -238,11 +238,11 @@ export const StoryWorkspacePage: React.FC = () => {
       <main style={{
         position: 'relative', zIndex: 10, flex: 1,
         display: 'grid',
-        gridTemplateColumns: isZenMode ? '1fr' : isTreeExpanded ? '1fr' : '5fr 7fr',
-        gap: '1.25rem',
-        padding: isZenMode ? '1.5rem' : '1rem 1.5rem',
-        maxHeight: isZenMode ? 'none' : 'calc(100vh - 120px)',
-        overflow: isZenMode ? 'visible' : 'hidden',
+        gridTemplateColumns: isZenMode ? '1fr' : isTreeExpanded ? '1fr' : 'minmax(300px, 4.2fr) minmax(0, 7.8fr)',
+        alignItems: 'start',
+        gap: '1.5rem',
+        padding: isZenMode ? '1.5rem 1.5rem 6rem' : '1rem 1.5rem 8rem',
+        minHeight: 'calc(100vh - 130px)',
         maxWidth: isZenMode ? '900px' : 'none',
         margin: isZenMode ? '0 auto' : undefined,
         width: '100%',
@@ -251,9 +251,14 @@ export const StoryWorkspacePage: React.FC = () => {
         {/* Left: Visual Tree Canvas */}
         {!isZenMode && (
           <div style={{
-            display: isTreeExpanded ? 'block' : 'flex',
+            position: isTreeExpanded ? 'relative' : 'sticky',
+            top: '1rem',
+            display: 'flex',
             flexDirection: 'column',
-            height: '100%',
+            height: isTreeExpanded ? '720px' : 'calc(100vh - 140px)',
+            minHeight: isTreeExpanded ? '720px' : '480px',
+            maxHeight: isTreeExpanded ? 'none' : 'calc(100vh - 100px)',
+            minWidth: 0,
             gridColumn: isTreeExpanded ? '1 / -1' : undefined,
           }}>
             <div style={{
@@ -302,7 +307,9 @@ export const StoryWorkspacePage: React.FC = () => {
         {(!isTreeExpanded || isZenMode) && (
           <div style={{
             display: 'flex', flexDirection: 'column', gap: '1.25rem',
-            overflowY: 'auto', paddingRight: '0.25rem',
+            minHeight: '100%',
+            minWidth: 0,
+            paddingBottom: '6rem',
           }}>
             {/* Breadcrumb */}
             {!isZenMode && (

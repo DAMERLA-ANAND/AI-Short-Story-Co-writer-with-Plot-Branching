@@ -62,7 +62,7 @@ export const FloatingChoiceDock: React.FC<FloatingChoiceDockProps> = ({
   if (choices.length === 0) return null;
 
   return (
-    <div style={{ width: '100%', marginTop: '0.5rem', animation: 'fadeInUp 0.5s ease-out 0.2s both' }}>
+    <div style={{ width: '100%', marginTop: '0.5rem', paddingBottom: '4rem', animation: 'fadeInUp 0.5s ease-out 0.2s both' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', padding: '0 0.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -89,8 +89,10 @@ export const FloatingChoiceDock: React.FC<FloatingChoiceDockProps> = ({
       {/* Choice Cards */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${Math.min(choices.length, 3)}, 1fr)`,
+        gridTemplateColumns: `repeat(${Math.min(choices.length, 3)}, minmax(0, 1fr))`,
         gap: '0.75rem',
+        width: '100%',
+        minWidth: 0,
       }}>
         {choices.map((choice, idx) => {
           const config = ARCHETYPE_CONFIGS[choice.archetype] || ARCHETYPE_CONFIGS.DIVERGENCE;
@@ -104,6 +106,7 @@ export const FloatingChoiceDock: React.FC<FloatingChoiceDockProps> = ({
               disabled={isGenerating}
               style={{
                 position: 'relative',
+                minWidth: 0,
                 textAlign: 'left',
                 padding: '1rem',
                 borderRadius: 'var(--radius-md)',
