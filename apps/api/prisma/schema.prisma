@@ -1,0 +1,170 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------------
+// USER AUTHENTICATION & SESSIONS
+// -------------------------------------------------------------
+
+model User {
+  id           String          @id @default(cuid())
+  email        String          @unique
+  passwordHash String
+  name         String
+  avatarUrl    String?
+  apiKey       String?         // Optional custom Gemini/LLM API Key
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  stories      Story[]
+  snapshots    StorySnapshot[]
+  sessions     Session[]
+
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+}
+
+// -------------------------------------------------------------
+// LIVE WORKING STORIES
+// -------------------------------------------------------------
+
+model Story {
+  id               String       @id @default(cuid())
+  userId           String?
+  isPublic         Boolean      @default(true)
+  title            String
+  genre            String
+  tone             String
+  premise          String
+  status           String       @default("GENERATING") // GENERATING, READY, FAILED
+  rootSceneId      String?      @unique
+  activeSceneId    String?
+  sourceSnapshotId String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  user             User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  scenes           Scene[]
+  choices          Choice[]
+
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model Scene {
+  id              String       @id @default(cuid())
+  storyId         String
+  parentChoiceId  String?      @unique
+  depth           Int
+  text            String
+  summary         String
+  status          String       @default("READY") // GENERATING, READY, FAILED
+  generationError String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  story           Story        @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  parentChoice    Choice?      @relation("ChoiceToChildScene", fields: [parentChoiceId], references: [id])
+  choices         Choice[]     @relation("SceneSourceChoices")
+
+  @@index([storyId])
+  @@index([depth])
+}
+
+model Choice {
+  id              String            @id @default(cuid())
+  storyId         String
+  sourceSceneId   String
+  childSceneId    String?           @unique
+  ordinal         Int
+  archetype       String            // CONFRONTATION, INVESTIGATION, DIVERGENCE
+  text            String
+  narrativeIntent String
+  state           String            @default("UNEXPLORED") // UNEXPLORED, GENERATING, EXPLORED
+  createdAt       DateTime          @default(now())
+
+  story           Story             @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  sourceScene     Scene             @relation("SceneSourceChoices", fields: [sourceSceneId], references: [id], onDelete: Cascade)
+  childScene      Scene?            @relation("ChoiceToChildScene")
+
+  @@unique([sourceSceneId, ordinal])
+  @@index([storyId])
+}
+
+// -------------------------------------------------------------
+// IMMUTABLE STORED SNAPSHOTS (THE MULTIVERSE VAULT)
+// -------------------------------------------------------------
+
+model StorySnapshot {
+  id               String           @id @default(cuid())
+  userId           String?
+  isPublic         Boolean          @default(true)
+  sourceStoryId    String
+  version          Int              @default(1)
+  title            String
+  genre            String
+  tone             String
+  premise          String
+  sceneCount       Int
+  branchCount      Int
+  snapshotRootId   String
+  snapshotActiveId String
+  createdAt        DateTime         @default(now())
+
+  user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  scenes           SnapshotScene[]
+  choices          SnapshotChoice[]
+
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model SnapshotScene {
+  id              String          @id @default(cuid())
+  snapshotId      String
+  originalSceneId String
+  parentChoiceId  String?
+  depth           Int
+  text            String
+  summary         String
+  createdAt       DateTime        @default(now())
+
+  snapshot        StorySnapshot   @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  choices         SnapshotChoice[] @relation("SnapshotSceneChoices")
+
+  @@index([snapshotId])
+}
+
+model SnapshotChoice {
+  id              String          @id @default(cuid())
+  snapshotId      String
+  sourceSceneId   String
+  childSceneId    String?
+  ordinal         Int
+  archetype       String
+  text            String
+  narrativeIntent String
+  createdAt       DateTime        @default(now())
+
+  snapshot        StorySnapshot   @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  sourceScene     SnapshotScene   @relation("SnapshotSceneChoices", fields: [sourceSceneId], references: [id], onDelete: Cascade)
+
+  @@index([snapshotId])
+}

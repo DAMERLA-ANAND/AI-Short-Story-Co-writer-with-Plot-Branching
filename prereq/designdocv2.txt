@@ -1,0 +1,1733 @@
+You are working on my existing project: an AI Short Story Co-Writer with Plot Branching.
+
+Your task is to inspect the existing repository first, understand the current implementation, and then MODIFY/EXTEND the project to implement the complete product specification below.
+
+IMPORTANT:
+- Do NOT throw away the existing project and rebuild unnecessarily.
+- First inspect the repository structure, existing frontend, backend, database/schema, API routes, components, and current story-generation flow.
+- Reuse working code where possible.
+- Refactor only where necessary.
+- Do not implement a simplified demo.
+- Implement the complete end-to-end functionality described below.
+- Do not silently remove existing functionality.
+- If something already exists, improve/extend it rather than creating duplicate competing implementations.
+- Keep the application runnable after each major change.
+- After implementation, run the appropriate type checks, tests, build, and lint commands available in the repository and fix errors.
+- Do not stop after creating UI mockups. All important UI actions must connect to real application state/API/database behavior.
+- Do not use fake story-tree data in the final implementation.
+- The story tree must persist correctly.
+- The UI must be responsive and polished enough for a hackathon demonstration.
+
+============================================================
+1. PRODUCT VISION
+============================================================
+
+The application is an AI-powered interactive short-story co-writer.
+
+The user creates a story by entering:
+1. Story title
+2. Genre
+3. Tone
+4. Premise
+
+After clicking "START WRITING":
+- The story is created/persisted.
+- The AI generates the opening scene.
+- The application navigates to the story workspace.
+- The workspace uses a genre-specific visual theme based on the selected genre.
+- The AI provides exactly 2–3 possible plot directions after each ready scene.
+- The user chooses a direction.
+- The AI generates the next scene.
+- The story continuously grows as a branching tree.
+- Previously generated scenes and branches are NEVER deleted just because the user navigates backward.
+- The user can navigate to any previous generated scene.
+- From an earlier scene, the user can select a different unexplored choice and create a new branch.
+- Already explored choices reuse their existing child scene and must NOT trigger another AI generation.
+- The complete story tree remains intact throughout exploration.
+- When the user reaches a satisfying ending / completes their story, they can use "STORE STORY".
+- Storing creates a saved copy/version of the story in a "Generated Stories" library/folder.
+- The saved copy preserves the complete explored tree, metadata, genre, tone, premise, scenes, choices, and relevant active state.
+- Opening a stored story must restore its complete tree and automatically restore the UI theme associated with its saved genre.
+- The user can continue exploring an opened stored story where appropriate.
+- The user can export the currently active linear path as Markdown or PDF.
+- Export must contain only the root-to-active-scene path and must not expose internal branching metadata or AI prompts.
+
+The application should feel like:
+"Enter a story world → explore it → branch it → travel backward → create alternate paths → preserve the entire tree → store the story → reopen the same story world later."
+
+============================================================
+2. DO NOT USE A GENERIC UI FOR ALL GENRES
+============================================================
+
+A major feature is GENRE-SPECIFIC UI.
+
+Genre is intentionally FIXED.
+
+Do NOT allow arbitrary custom genre input in the MVP.
+
+The reason is that the selected genre determines:
+- UI theme
+- colors
+- visual atmosphere
+- typography choices where appropriate
+- accents
+- icons/visual language
+- card/button styling
+- subtle animations/background treatment where appropriate
+- AI writing style/instructions
+
+The underlying Story Workspace remains the same functional application, but its visual presentation changes dynamically according to the story's genre.
+
+The genre must be stored with the Story record so that reopening a saved story automatically restores the correct theme.
+
+============================================================
+3. FIXED GENRE SYSTEM
+============================================================
+
+Implement a centralized genre configuration system.
+
+Use a finite, controlled list of genres.
+
+At minimum implement these genres:
+
+1. Love Story
+2. Detective / Mystery
+3. Horror
+4. Science Fiction
+5. Fantasy
+6. Adventure
+7. Comedy
+8. Historical
+9. Drama
+10. Thriller
+
+You may use internal stable IDs such as:
+
+love
+detective
+horror
+scifi
+fantasy
+adventure
+comedy
+historical
+drama
+thriller
+
+Do not use free-text genre input.
+
+The exact labels shown to users should be polished and consistent.
+
+Create a central GenreConfig / GenreTheme registry rather than scattering genre-specific conditions throughout the React code.
+
+Conceptually:
+
+GenreConfig:
+- id
+- displayName
+- description
+- icon
+- color/semantic tokens
+- background style
+- surface/card style
+- accent style
+- button style
+- typography treatment
+- optional animation settings
+- AI writing guidance
+- prompt/style instructions
+
+Example:
+
+LOVE STORY:
+- romantic pink/rose visual language
+- soft surfaces
+- elegant/emotional appearance
+- subtle heart/romantic visual elements
+- emotional/relationship-focused AI writing guidance
+
+DETECTIVE/MYSTERY:
+- dark/navy/noir appearance
+- investigation-inspired visual language
+- clue/case-file style where appropriate
+- suspenseful/investigative AI writing guidance
+
+HORROR:
+- dark, eerie visual language
+- restrained crimson/danger accents
+- atmospheric presentation
+- unsettling/suspenseful AI writing guidance
+
+SCI-FI:
+- futuristic dark/cool interface
+- cyan/neon-like accents
+- technological visual language
+- futuristic/speculative AI writing guidance
+
+FANTASY:
+- magical/purple/gold visual language
+- mystical visual treatment
+- fantasy-oriented AI writing guidance
+
+ADVENTURE:
+- exploration-oriented visual language
+- warm/exploration colors
+- adventurous AI writing guidance
+
+COMEDY:
+- bright/playful visual language
+- friendly UI
+- humorous/light AI writing guidance
+
+HISTORICAL:
+- vintage/parchment-inspired visual language
+- restrained historical aesthetic
+- historically appropriate narrative guidance
+
+DRAMA:
+- cinematic/emotional visual language
+- character-focused AI guidance
+
+THRILLER:
+- high-contrast tense visual language
+- suspense/pacing-focused AI guidance
+
+Do not make the colors identical for every genre.
+
+============================================================
+4. STORY SETUP PAGE
+============================================================
+
+Create/maintain a polished Story Creation / Setup page.
+
+Fields:
+
+TITLE
+- required
+- appropriate length validation
+
+GENRE
+- required
+- fixed dropdown/select
+- only genres from the centralized genre registry
+
+TONE
+- required
+- use a controlled set of tones if the current application architecture supports it
+- examples:
+  - Dark
+  - Suspenseful
+  - Emotional
+  - Humorous
+  - Serious
+  - Lighthearted
+  - Romantic
+  - Mysterious
+  - Epic
+- Tone must remain separate from Genre.
+
+PREMISE
+- required
+- multiline text input
+- clear helper text
+- validate empty/invalid input
+
+Primary CTA:
+
+[ START WRITING ]
+
+When the user clicks START WRITING:
+
+1. Validate the form.
+2. Create/persist the story.
+3. Save title, genre, tone, premise, status, timestamps.
+4. Generate the opening scene through the backend.
+5. Persist the opening scene.
+6. Persist its 2–3 choices.
+7. Set rootSceneId.
+8. Set activeSceneId to the root scene.
+9. Navigate to the story workspace route using the story's unique ID.
+10. Apply the selected genre theme immediately.
+11. Display the generated opening scene and choices.
+
+The user should experience this as:
+"Start Writing → enter my story world."
+
+Do not navigate to a generic dashboard after generation.
+
+============================================================
+5. UNIQUE STORY WORKSPACE
+============================================================
+
+Every story should have a unique route, for example:
+
+/stories/:storyId
+
+The workspace should load the story by ID.
+
+The workspace should include:
+
+1. Story Header
+2. Story Tree
+3. Scene Reader
+4. Choice List
+5. Current Path / Breadcrumb
+6. Generation state
+7. Error state
+8. Navigation controls
+9. Export menu
+10. Store Story action where appropriate
+
+The workspace theme must be determined by the story's stored genre.
+
+Do NOT create ten unrelated pages.
+
+Use one StoryWorkspace architecture with dynamic GenreTheme/GenreConfig.
+
+============================================================
+6. STORY HEADER
+============================================================
+
+Display:
+
+- Story title
+- Genre
+- Tone
+- optional short premise indicator
+- navigation back to story library
+- Store Story action when applicable
+- Export menu
+
+Example conceptual layout:
+
+[← Generated Stories]
+TITLE
+Genre • Tone
+
+[STORE STORY] [EXPORT ▼]
+
+The exact design can be improved, but the functionality must exist.
+
+============================================================
+7. STORY TREE — CORE FEATURE
+============================================================
+
+The story tree is the central feature.
+
+Every generated scene must remain represented in the tree.
+
+Example:
+
+Scene 1
+├── Choice A
+│   └── Scene 2A
+│       ├── Choice C
+│       │   └── Scene 3C
+│       └── Choice D
+│           └── Scene 3D
+│
+└── Choice B
+    └── Scene 2B
+        └── Choice E
+            └── Scene 3E
+
+Use a recursive DOM/tree implementation unless the repository already has a better compatible implementation.
+
+Do not replace this with a flat list.
+
+The tree must:
+- show hierarchy
+- show generated scenes
+- show relationships between choices and child scenes
+- identify the active scene
+- allow clicking any generated scene
+- visually distinguish the current path where practical
+- show unexplored choices appropriately
+- remain intact after navigation
+- remain intact after creating new branches
+- remain intact after storing/reopening
+
+The tree is NOT an undo history.
+
+It is persistent story history.
+
+============================================================
+8. IMMUTABLE STORY SCENES
+============================================================
+
+Once a scene is successfully generated and marked ready, its prose should be treated as immutable.
+
+Do NOT overwrite an existing ready scene merely because the user navigates backward.
+
+If the user wants a different continuation:
+- go back to the earlier scene
+- choose a different unexplored choice
+- create a new child branch
+
+Existing branches remain.
+
+============================================================
+9. BACKWARD NAVIGATION / STORY REWIND
+============================================================
+
+This is a REQUIRED feature.
+
+The user must be able to click any previously generated scene in the tree.
+
+Example:
+
+Scene 1
+├── A
+│   └── Scene 2A
+│       └── Scene 3A
+│           └── Scene 4A ← current
+└── B
+    └── Scene 2B
+
+The user can click Scene 2A.
+
+The application must:
+- make Scene 2A the active scene
+- update activeSceneId
+- update the current path
+- update the reader
+- show Scene 2A's choices
+- NOT delete Scene 3A or Scene 4A
+- NOT regenerate Scene 2A
+- NOT delete any branches
+- NOT mutate the tree
+
+This is "time travel/navigation", not destructive undo.
+
+Add clear UX indicating that the user is viewing an earlier point when appropriate.
+
+A button such as:
+
+[ 🌿 CONTINUE FROM HERE ]
+
+may be used as a clear UX affordance.
+
+IMPORTANT:
+The user does not need a separate editable path array.
+The active path must be derived from activeSceneId by walking parent relationships.
+
+============================================================
+10. ALREADY EXPLORED VS UNEXPLORED CHOICES
+============================================================
+
+Every choice must clearly communicate whether it has already generated a child.
+
+For an explored choice:
+
+✓ Choice text
+  View existing branch
+
+Clicking it:
+- opens the existing child scene
+- changes activeSceneId appropriately
+- DOES NOT call the AI
+- DOES NOT create a duplicate scene
+
+For an unexplored choice:
+
+✨ Choice text
+  Continue / Generate
+
+Clicking it:
+- generates a new child scene
+- stores the child
+- stores its choices
+- updates the tree
+- makes the new child active
+
+A Choice may have at most one childSceneId.
+
+Do not generate multiple children for the same exact Choice in the MVP.
+
+============================================================
+11. BRANCHING FROM AN EARLIER SCENE
+============================================================
+
+This is REQUIRED.
+
+Example:
+
+Original:
+
+Scene 1
+└── Choice A
+    └── Scene 2
+        ├── Choice B
+        │   └── Scene 3B
+        └── Choice C
+            └── Scene 3C
+
+User reaches Scene 3B and dislikes the direction.
+
+They click Scene 2.
+
+They see:
+
+Choice B ✓ explored
+Choice C ✓/explored or unexplored depending on state
+
+If another choice is unexplored and the user selects it:
+
+Create a new branch.
+
+Never delete the old branch.
+
+The result should be:
+
+Scene 2
+├── Choice B
+│   └── Scene 3B
+└── Choice C
+    └── NEW Scene 3C
+
+The AI context for the new generation must be based ONLY on the root-to-Scene-2 ancestry and the newly selected choice.
+
+It must not use sibling or descendant branches as narrative context.
+
+============================================================
+12. STORY CONTEXT / AI GENERATION
+============================================================
+
+The browser must NOT send the complete narrative manually.
+
+The server must reconstruct authoritative story context from the database.
+
+Context should include:
+- story title
+- premise
+- genre
+- tone
+- root-to-source-scene ancestry
+- selected choices
+- relevant scene text/summaries
+- genre-specific writing guidance
+
+For normal MVP depth:
+- use full text through the configured context depth
+- for deeper stories, use summaries for older scenes and full text for the latest scenes according to the existing plan
+
+The context must never include sibling branches or unrelated descendants.
+
+The AI must produce structured output:
+
+{
+  sceneText,
+  sceneSummary,
+  choices: [
+    {
+      text,
+      narrativeIntent
+    }
+  ]
+}
+
+Validate:
+- sceneText approximately 300–500 words according to existing configurable tolerance
+- sceneSummary approximately 40–100 words
+- exactly 2 or 3 choices
+- choices have concise unique labels
+- each choice has non-empty narrativeIntent
+
+If invalid:
+- perform the planned single repair attempt
+- if still invalid, return a useful error
+- preserve the existing story state
+
+============================================================
+13. AI PROVIDER ARCHITECTURE
+============================================================
+
+Preserve/use the existing provider abstraction.
+
+Expected architecture:
+
+AI provider interface
+├── OpenAI provider
+└── Mock provider
+
+Use the OpenAI Responses API behind the provider interface if that is what the current plan/repository uses.
+
+Do not hard-code provider calls throughout the frontend.
+
+The frontend calls the application backend.
+
+The backend:
+- constructs context
+- constructs prompt
+- calls provider
+- validates structured output
+- persists the result
+
+============================================================
+14. GENERATION CONCURRENCY / DUPLICATE PREVENTION
+============================================================
+
+Prevent duplicate child generation if a user double-clicks a choice or multiple requests arrive simultaneously.
+
+Use transactional reservation/locking/uniqueness behavior consistent with the current architecture.
+
+If a choice already has a child:
+- return/open the existing child
+- do not call AI again.
+
+If generation is in progress:
+- show a proper loading state
+- prevent duplicate generation
+- return appropriate in-progress/conflict behavior according to the current API design
+
+Never create duplicate child scenes for the same Choice.
+
+============================================================
+15. ACTIVE SCENE
+============================================================
+
+The story must have:
+
+activeSceneId
+
+The active scene determines:
+- what the reader displays
+- what choices are displayed
+- what path is considered current
+- what gets exported
+
+Do NOT store an editable "active path array".
+
+Derive the active path from activeSceneId.
+
+The existing API should support something equivalent to:
+
+POST /api/stories/:storyId/active-scene
+
+Body:
+{
+  sceneId
+}
+
+This must:
+- validate that the scene belongs to the story
+- update activeSceneId
+- not generate AI content
+- not modify existing scenes
+- return updated story state
+
+============================================================
+16. STORY END / COMPLETION
+============================================================
+
+The application needs a clear way for the user to recognize that they have reached an ending.
+
+Do not force a single global "correct ending" unless the existing AI design requires it.
+
+The AI can generate an ending scene when the narrative reaches a natural conclusion.
+
+The user should be able to recognize that they have completed/satisfied the current story path.
+
+When the story is ready to be preserved, show:
+
+[ 💾 STORE STORY ]
+
+The Store Story operation must not destroy or collapse the full tree.
+
+============================================================
+17. STORE STORY / SAVED COPY
+============================================================
+
+This is a NEW explicit product requirement.
+
+Implement a "Store Story" workflow.
+
+When the user clicks:
+
+[ STORE STORY ]
+
+the application should create/persist a saved copy/version of the currently explored story.
+
+The saved copy must preserve:
+- title
+- genre
+- tone
+- premise
+- complete scene tree
+- all generated scenes
+- all choices
+- branch relationships
+- root scene
+- active scene/path
+- timestamps
+- any required completion/status information
+
+IMPORTANT:
+Do NOT store only the final linear path.
+
+The COMPLETE TREE must be preserved.
+
+Conceptually:
+
+Working Story
+    |
+    | STORE STORY
+    v
+Generated Stories
+    |
+    └── Story Copy
+         ├── metadata
+         ├── complete tree
+         ├── scenes
+         ├── choices
+         └── active state
+
+The exact database implementation can be decided based on the current schema, but it must provide the behavior of a stored copy/snapshot.
+
+If the current architecture already persists the story continuously, do not unnecessarily duplicate all records if a version/snapshot model is cleaner.
+
+The user-visible behavior, however, must be equivalent to having a stored story copy.
+
+Do not destroy the working story after storing it.
+
+============================================================
+18. GENERATED STORIES LIBRARY
+============================================================
+
+Create/extend a Story Library / Generated Stories page.
+
+It should display stored stories.
+
+Each story card should show at minimum:
+- title
+- genre
+- tone
+- number of scenes
+- number of branches where available
+- last updated/stored time where useful
+- Open button
+
+Example:
+
+GENERATED STORIES
+
+❤️ The Summer We Met
+Love Story • 8 scenes • 3 branches
+[OPEN]
+
+🕵️ The Silent Room
+Detective • 10 scenes • 4 branches
+[OPEN]
+
+🚀 The Last Signal
+Science Fiction • 12 scenes • 5 branches
+[OPEN]
+
+The library should load real persisted stories.
+
+No hard-coded sample cards in the production flow.
+
+============================================================
+19. OPENING A STORED STORY
+============================================================
+
+When the user opens a stored story:
+
+1. Load the story by ID.
+2. Load its complete scene tree.
+3. Load all choices/relationships.
+4. Restore activeSceneId.
+5. Read the stored genre.
+6. Resolve the GenreConfig.
+7. Apply the corresponding UI theme.
+8. Navigate to the story workspace.
+9. Display the correct active scene.
+10. Display the complete tree.
+11. Allow further navigation/exploration according to the story state.
+
+Example:
+
+Stored:
+genre = love
+
+Opening it must result in:
+Love Story UI
+
+Stored:
+genre = detective
+
+Opening it must result in:
+Detective UI
+
+The UI must never default to a generic theme if a valid stored genre exists.
+
+============================================================
+20. GENRE THEME RESTORATION
+============================================================
+
+The theme must be derived from persistent story data, not temporary frontend state alone.
+
+Do not rely only on localStorage for determining the saved story's genre.
+
+The database is authoritative.
+
+Flow:
+
+storedStory.genre
+      ↓
+GenreConfig registry
+      ↓
+Theme provider / CSS variables
+      ↓
+StoryWorkspace
+
+If the application uses CSS variables/tokens, use them to avoid duplicating entire components per genre.
+
+Example conceptual architecture:
+
+<GenreThemeProvider genre={story.genre}>
+    <StoryWorkspace />
+</GenreThemeProvider>
+
+or an equivalent implementation appropriate to the existing project.
+
+============================================================
+21. CURRENT PATH / BREADCRUMB
+============================================================
+
+Provide a clear indication of where the user currently is.
+
+Example:
+
+Story
+>
+Opening
+>
+Investigate Signal
+>
+Enter Ship
+>
+Current Scene
+
+The current path must be calculated from activeSceneId.
+
+If the user goes backward, the breadcrumb changes.
+
+If the user branches, the breadcrumb changes.
+
+Do not manually maintain this as a separate editable state.
+
+============================================================
+22. STORY TREE VISUAL STATES
+============================================================
+
+The tree should visually communicate:
+
+- root scene
+- normal generated scene
+- active scene
+- current path
+- explored branch
+- unexplored choices
+- ending/completed scene where appropriate
+
+Use the genre-specific visual system without sacrificing readability.
+
+For example, a detective story may use clue/case-file styling, while a love story may use softer cards.
+
+Do not make the theme so decorative that the tree becomes difficult to understand.
+
+Functionality and readability take priority.
+
+============================================================
+23. SCENE READER
+============================================================
+
+The center/main reader should display:
+
+- current scene
+- scene text
+- optional scene summary if appropriate
+- current scene metadata in a subtle manner
+- current path/breadcrumb
+- navigation state
+
+Do not expose internal database IDs or raw AI prompts.
+
+Scene prose should be readable and visually prominent.
+
+============================================================
+24. CHOICE UI
+============================================================
+
+After a ready scene, display its 2–3 choices.
+
+Each choice should show:
+- choice text
+- optional narrative intent only if we decide it is useful to expose; by default narrativeIntent should remain internal
+- explored/unexplored state
+- action
+
+Example:
+
+WHAT HAPPENS NEXT?
+
+[ 🔎 Enter the control room ]
+   Already explored → View branch
+
+[ 📡 Contact the station ]
+   Continue → Generate
+
+[ 🚪 Leave the ship ]
+   Continue → Generate
+
+Do not display raw narrativeIntent unless there is a strong UX reason.
+
+============================================================
+25. LOADING STATES
+============================================================
+
+When generating a scene, show a polished generation state.
+
+Example:
+
+✨ Writing the next scene...
+
+The user should understand:
+- generation is happening
+- the application is not frozen
+- duplicate clicks should be disabled
+
+The genre theme should also be reflected in loading visuals where appropriate.
+
+============================================================
+26. ERROR HANDLING
+============================================================
+
+If AI generation fails:
+
+Show a useful error panel.
+
+Example:
+
+⚠️ Couldn't generate the next scene.
+
+Your existing story is safe.
+
+[ RETRY ]
+[ GO BACK ]
+
+Retry must:
+- not duplicate existing successful children
+- use the same choice when appropriate
+- preserve previous story state
+
+Validation errors must be handled safely.
+
+Network errors must be handled safely.
+
+Invalid story IDs must return proper not-found behavior.
+
+Invalid scene IDs/choice IDs must be rejected.
+
+Cross-story scene/choice access must be rejected.
+
+============================================================
+27. EXPORT
+============================================================
+
+Provide:
+
+[ EXPORT ▼ ]
+
+Options:
+
+- Markdown (.md)
+- PDF (.pdf)
+
+Export MUST represent only:
+
+root → activeScene
+
+For example:
+
+Scene 1
+  ↓
+Scene 2A
+  ↓
+Scene 3C
+  ↓
+Scene 4C
+
+Export ONLY those scenes.
+
+Do not export:
+- sibling branches
+- unexplored choices
+- internal IDs
+- parentChoiceId
+- childSceneId
+- AI prompts
+- narrativeIntent/internal metadata
+- database metadata
+- hidden system information
+
+The PDF should be formatted as a clean readable short story.
+
+Markdown should be clean story prose/structure.
+
+Use the existing server-side export architecture if already present.
+
+============================================================
+28. STORY PERSISTENCE
+============================================================
+
+The database must remain the authoritative source for:
+- stories
+- scenes
+- choices
+- branch relationships
+- active scene
+- stored copies/versions if implemented separately
+- genre
+- tone
+- premise
+
+The browser must not be responsible for reconstructing the authoritative story tree from temporary state.
+
+On page refresh:
+- load story from backend
+- reconstruct tree
+- reconstruct active path
+- restore genre theme
+
+On closing/reopening:
+- story remains available.
+
+============================================================
+29. DATABASE MODEL
+============================================================
+
+Preserve or adapt the existing model.
+
+Expected conceptual model:
+
+Story:
+- id
+- title
+- premise
+- genre
+- tone
+- status
+- rootSceneId
+- activeSceneId
+- timestamps
+- scenes
+- choices
+- saved/stored/version information as required
+
+Scene:
+- id
+- storyId
+- parentChoiceId
+- depth
+- text
+- summary
+- status
+- generationError
+- timestamps
+- parent choice
+- outgoing choices
+
+Choice:
+- id
+- storyId
+- sourceSceneId
+- childSceneId nullable
+- ordinal
+- text
+- narrativeIntent
+- timestamps
+
+Core invariants:
+1. One root scene after opening generation succeeds.
+2. Ready scenes are immutable.
+3. A ready scene has exactly 2 or 3 choices.
+4. A choice has one source scene.
+5. A choice has at most one child scene.
+6. A child scene has exactly one parent choice.
+7. Explored choice opens existing child.
+8. Unexplored choice generates one child.
+9. Context uses ancestry only.
+10. activeSceneId determines active path.
+11. Export follows root → active scene.
+12. All branches remain intact.
+
+If implementing stored copies/versions requires additional entities, introduce them carefully.
+
+Do not destroy the simple branch relationships just to support storage.
+
+============================================================
+30. API
+============================================================
+
+Maintain/adapt these API behaviors:
+
+POST /api/stories
+- create story
+- generate opening
+- persist root and choices
+- return story
+
+GET /api/stories
+- list stored/available stories as appropriate
+
+GET /api/stories/:storyId
+- return complete story/tree state required by workspace
+
+POST /api/stories/:storyId/continue
+Body:
+{
+  choiceId
+}
+Behavior:
+- validate choice
+- if choice already has child → return existing child / story state without AI call
+- if choice has no child → generate and persist child
+- update activeSceneId to new child
+- return updated state
+
+POST /api/stories/:storyId/active-scene
+Body:
+{
+  sceneId
+}
+Behavior:
+- validate ownership
+- set activeSceneId
+- no AI generation
+- preserve all branches
+
+GET /api/stories/:storyId/export?format=markdown
+GET /api/stories/:storyId/export?format=pdf
+
+Add a suitable Store Story endpoint, for example:
+
+POST /api/stories/:storyId/store
+
+or an equivalent RESTful endpoint.
+
+The endpoint must create/persist the saved story copy/version behavior.
+
+If a story is already automatically persistent, the store endpoint can create a snapshot/version record rather than duplicating unnecessary live records.
+
+============================================================
+31. FRONTEND ARCHITECTURE
+============================================================
+
+Use the existing React/Vite/TypeScript architecture if present.
+
+Expected conceptual components:
+
+StoryLibraryPage
+NewStoryPage
+StoryWorkspacePage
+
+StoryHeader
+StoryTree
+StoryTreeNode
+SceneReader
+ChoiceList
+ChoiceButton
+CurrentPathBreadcrumb
+GenerationState
+ErrorPanel
+ExportMenu
+StoreStoryButton
+GenreThemeProvider / GenreTheme system
+
+Use TanStack Query if already part of the project.
+
+Suggested query concepts:
+
+["stories"]
+["story", storyId]
+
+Mutations:
+- create story
+- continue story
+- set active scene
+- store story
+
+Do not create unnecessary duplicated global state.
+
+============================================================
+32. ROUTING
+============================================================
+
+Ensure there are routes conceptually equivalent to:
+
+/stories
+/stories/new
+/stories/:storyId
+
+If the current app uses different paths, adapt without breaking the existing router.
+
+When START WRITING succeeds:
+
+navigate to:
+
+/stories/:storyId
+
+When opening a stored story:
+
+navigate to:
+
+/stories/:storyId
+
+The same workspace must load the correct story from its ID.
+
+============================================================
+33. UX FOR SAVED STORIES
+============================================================
+
+The Generated Stories library should make the story feel like a collection of personal story worlds.
+
+Cards can include:
+- genre icon
+- genre-specific accent
+- title
+- short premise
+- scene count
+- branch count
+- last saved
+- Open
+
+Use the story's genre theme subtly in the card itself.
+
+Example:
+
+Love Story:
+pink/rose accent
+
+Detective:
+dark/noir accent
+
+Sci-Fi:
+futuristic accent
+
+But maintain overall library usability.
+
+============================================================
+34. IMPORTANT: COMPLETE TREE VS ACTIVE PATH
+============================================================
+
+Understand and preserve this distinction.
+
+COMPLETE TREE:
+- all generated branches
+- permanently retained
+
+ACTIVE PATH:
+- root → currently active scene
+- changes when user navigates
+- used for current reading state
+- used for export
+
+Example:
+
+COMPLETE TREE:
+
+        Scene 1
+       /       \
+    Scene 2A  Scene 2B
+      /  \
+   3A    3B
+
+If activeSceneId = 3B:
+
+ACTIVE PATH:
+Scene 1 → Scene 2A → Scene 3B
+
+If user clicks Scene 2B:
+
+COMPLETE TREE stays identical.
+
+ACTIVE PATH becomes:
+Scene 1 → Scene 2B
+
+If user selects an unexplored choice under Scene 2B:
+
+the tree grows.
+
+Never replace the complete tree with the active path.
+
+============================================================
+35. DO NOT IMPLEMENT DESTRUCTIVE UNDO
+============================================================
+
+Do NOT add a normal browser-like undo that deletes generated descendants.
+
+The required behavior is:
+
+Navigate backward
++
+Choose another unexplored option
+=
+Create a new branch
++
+Keep all previous branches
+
+This is a branching/time-travel story experience.
+
+============================================================
+36. SAME-CHOICE REGENERATION IS NOT MVP
+============================================================
+
+Do NOT implement multiple generated children for the exact same Choice in this MVP.
+
+If:
+
+Choice A → Scene 3A
+
+then Choice A cannot simultaneously produce:
+
+Scene 3A-v2
+Scene 3A-v3
+
+The user should instead return to the source scene and choose another available choice.
+
+If future extensibility is needed, structure the code cleanly enough that regeneration/versioning could be added later, but do not complicate the MVP unnecessarily.
+
+============================================================
+37. SECURITY / VALIDATION
+============================================================
+
+Validate all server inputs.
+
+Never trust:
+- storyId from client without ownership/existence validation
+- sceneId from client
+- choiceId from client
+- genre from client without validating against the fixed genre registry
+- export format
+- stored copy IDs
+
+The server must ensure:
+- scene belongs to story
+- choice belongs to story
+- parent/child relationships are valid
+- active scene belongs to story
+- invalid cross-story references are rejected
+
+Do not let the browser submit arbitrary raw narrative context to override server-generated context.
+
+============================================================
+38. RESPONSIVE UI
+============================================================
+
+The workspace should work on:
+- desktop
+- laptop
+- tablet
+- reasonable mobile layout
+
+Desktop can use:
+LEFT:
+Story Tree
+
+CENTER:
+Scene Reader
+
+RIGHT:
+Choices
+
+On smaller screens, stack or collapse these intelligently.
+
+Do not sacrifice the tree's usability.
+
+============================================================
+39. VISUAL QUALITY
+============================================================
+
+This is intended for a hackathon.
+
+The UI should feel polished.
+
+Do not make it look like a basic CRUD application.
+
+Use:
+- consistent spacing
+- hierarchy
+- clear typography
+- polished buttons
+- clear active states
+- smooth but restrained transitions
+- genre-specific atmosphere
+- readable story text
+- intuitive branching controls
+
+Avoid excessive animations.
+
+The story text must remain the focus.
+
+============================================================
+40. DATA SAFETY DURING NAVIGATION
+============================================================
+
+When the user navigates backward:
+- no scenes deleted
+- no choices deleted
+- no branch relationships changed
+- no AI generation
+
+When the user opens an explored choice:
+- no duplicate generation
+- existing child is reused
+
+When the user chooses an unexplored choice:
+- generate exactly one child
+- persist it
+- update tree
+- set it active
+
+When the user stores the story:
+- preserve the full tree
+- preserve genre
+- preserve active state
+- do not collapse the story into a single path
+
+============================================================
+41. STORY LIBRARY / PERSISTENCE BEHAVIOR
+============================================================
+
+The user should be able to:
+
+1. Create story.
+2. Explore it.
+3. Close/refresh browser.
+4. Return to Generated Stories.
+5. Open the story.
+6. See the complete tree.
+7. See the correct genre-specific UI.
+8. Continue from the active scene or navigate to another scene.
+9. Explore existing branches.
+10. Create new branches from unexplored choices.
+11. Export the desired active path.
+
+This must work using persisted database state, not only frontend memory.
+
+============================================================
+42. MOCK PROVIDER / TESTING
+============================================================
+
+The mock AI provider must be capable of testing:
+- opening scene
+- 2–3 choices
+- continuation
+- multiple branches
+- navigation backward
+- existing-choice reuse
+- new branch creation
+- export
+- store/reopen
+- genre restoration
+
+Add or update tests for:
+
+UNIT:
+- context construction
+- path calculation
+- tree traversal
+- genre config lookup
+- export path selection
+- validation
+
+INTEGRATION:
+- create story
+- generate opening
+- continue
+- revisit explored choice
+- active-scene navigation
+- create alternative branch
+- store story
+- reopen stored story
+- export
+
+E2E where practical:
+1. Create story.
+2. Select genre.
+3. Start writing.
+4. See genre-specific workspace.
+5. Generate branch A.
+6. Navigate backward.
+7. Generate branch B from earlier scene.
+8. Verify both branches remain.
+9. Store story.
+10. Return to library.
+11. Open stored story.
+12. Verify complete tree remains.
+13. Verify correct genre theme returns.
+14. Export active path.
+
+============================================================
+43. ACCEPTANCE CRITERIA
+============================================================
+
+The implementation is NOT complete unless all of the following are true:
+
+[ ] User can create a story with title, fixed genre, tone, premise.
+
+[ ] Genre is selected from a fixed list.
+
+[ ] START WRITING creates the story and generates the opening.
+
+[ ] User is navigated to /stories/:storyId after successful creation.
+
+[ ] The story workspace applies the selected genre-specific UI.
+
+[ ] Opening scene is approximately 300–500 words.
+
+[ ] Opening scene has exactly 2–3 choices.
+
+[ ] User can select a choice and generate the next scene.
+
+[ ] Every generated scene is stored.
+
+[ ] The complete story tree remains intact.
+
+[ ] Clicking an existing scene changes the active scene without AI generation.
+
+[ ] Going backward never deletes descendants.
+
+[ ] User can choose a different unexplored choice from an earlier scene.
+
+[ ] New branch is created without deleting the old branch.
+
+[ ] Existing choices never generate duplicate children.
+
+[ ] AI context contains only the selected source scene's ancestry.
+
+[ ] Sibling branches do not contaminate new generation context.
+
+[ ] activeSceneId correctly determines the current active path.
+
+[ ] Breadcrumb/path updates correctly.
+
+[ ] Loading state exists.
+
+[ ] Retry/error handling exists.
+
+[ ] Story survives page refresh.
+
+[ ] Story can be reopened from Generated Stories.
+
+[ ] Stored story contains the complete explored tree.
+
+[ ] Stored story retains genre, tone, title, premise.
+
+[ ] Opening stored story restores the complete tree.
+
+[ ] Opening stored story restores the correct genre-specific UI.
+
+[ ] User can continue exploring a stored story where appropriate.
+
+[ ] Export Markdown works.
+
+[ ] Export PDF works.
+
+[ ] Export contains only root-to-active-scene path.
+
+[ ] Export contains no internal branching metadata.
+
+[ ] No raw AI prompts are exposed.
+
+[ ] Server validates story/scene/choice relationships.
+
+[ ] Duplicate concurrent generation is prevented.
+
+[ ] Mock provider tests pass.
+
+[ ] TypeScript checks pass.
+
+[ ] Production build passes.
+
+============================================================
+44. IMPLEMENTATION ORDER
+============================================================
+
+Do not randomly modify everything at once.
+
+Use this sequence:
+
+PHASE 1 — INSPECT
+- inspect repository
+- understand current implementation
+- identify existing architecture
+- identify what already works
+- identify gaps
+
+PHASE 2 — DATA / BACKEND
+- update schema
+- genre registry validation
+- story persistence
+- story tree persistence
+- active scene
+- store/snapshot behavior
+- APIs
+- generation/context logic
+
+PHASE 3 — GENRE SYSTEM
+- central GenreConfig
+- theme provider/tokens
+- fixed genre selection
+- genre-specific UI styling
+- persistence/restoration
+
+PHASE 4 — STORY WORKSPACE
+- tree
+- scene reader
+- choices
+- active scene
+- breadcrumb
+- backward navigation
+- branch creation
+
+PHASE 5 — LIBRARY / STORE
+- Generated Stories page
+- Store Story
+- reopen story
+- restore complete tree
+- restore genre theme
+
+PHASE 6 — EXPORT
+- Markdown
+- PDF
+- active-path-only behavior
+
+PHASE 7 — ERROR / LOADING / CONCURRENCY
+- loading states
+- retries
+- validation
+- duplicate prevention
+
+PHASE 8 — TESTING
+- unit
+- integration
+- e2e where available
+
+PHASE 9 — POLISH
+- responsive layout
+- genre-specific visual polish
+- animations
+- accessibility
+- empty/loading/error states
+
+============================================================
+45. IMPORTANT ARCHITECTURAL PRINCIPLE
+============================================================
+
+Do not confuse:
+
+STORY CONTENT
+with
+STORY PRESENTATION.
+
+The database stores:
+- title
+- genre
+- tone
+- premise
+- scenes
+- choices
+- tree relationships
+- active scene
+- stored/version information
+
+The GenreConfig controls:
+- how the story looks
+- how the interface feels
+- visual language
+- AI genre guidance
+
+This allows the same story engine to support multiple genre worlds without duplicating the entire application.
+
+============================================================
+46. IMPORTANT USER EXPERIENCE PRINCIPLE
+============================================================
+
+The user should never feel that they are using:
+"an AI API with some buttons."
+
+They should feel that they are entering and exploring a persistent story world.
+
+The ideal experience:
+
+1. Choose genre.
+2. The application visually transforms into that genre.
+3. Enter story premise.
+4. Click START WRITING.
+5. Opening scene appears.
+6. Choices appear.
+7. User chooses.
+8. World expands.
+9. Tree visibly grows.
+10. User can travel backward.
+11. User can change direction.
+12. Previous branches remain.
+13. User reaches an ending.
+14. User stores the complete story.
+15. Story appears in Generated Stories.
+16. User reopens it later.
+17. Its original genre UI returns.
+18. Its complete tree returns.
+19. User can continue exploring.
+20. User can export the currently selected path.
+
+============================================================
+47. FINAL INSTRUCTION TO CODEX
+============================================================
+
+Start by inspecting the entire repository.
+
+Do NOT immediately start writing code.
+
+First determine:
+- current stack
+- current architecture
+- existing routes
+- current database schema
+- current story generation logic
+- existing UI components
+- current API endpoints
+- existing tests
+- existing environment configuration
+
+Then implement the specification above incrementally.
+
+If the repository differs from the originally planned architecture, preserve the project's existing working architecture where reasonable rather than blindly rewriting it. However, all PRODUCT BEHAVIOR and acceptance criteria above are mandatory.
+
+After implementation:
+1. Run formatting if configured.
+2. Run lint.
+3. Run TypeScript/type checks.
+4. Run unit/integration tests.
+5. Run production build.
+6. Fix all errors.
+7. Verify database migrations/schema.
+8. Verify API/frontend integration.
+9. Verify the complete create → branch → rewind → branch again → store → library → reopen → restore theme/tree → export workflow.
+
+At the end, provide a concise implementation report containing:
+- files changed
+- database/schema changes
+- API changes
+- frontend changes
+- genre system changes
+- story-tree changes
+- store/reopen behavior
+- tests run
+- build result
+- any remaining limitations
+
+Do not claim a feature is complete unless it is actually implemented and verified.

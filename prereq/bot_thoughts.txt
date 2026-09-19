@@ -1,0 +1,13 @@
+To help you achieve a high-quality outcome, I evaluate projects based on how effectively the technical implementation solves the user’s problem. For this specific story-branching app, a "good score" would be based on these four pillars:
+
+Functional Integrity: Does the AI consistently generate logical continuations? Does the "combine into final draft" feature correctly stitch the chosen path together without losing data?
+
+User Experience (UX): Is the story-tree intuitive to navigate? A user should be able to look at the branch view and immediately understand where they are and how to backtrack to a previous decision.
+
+Prompt Engineering: How well have you instructed the AI to provide distinct plot directions? If the 2-3 choices are too similar, the tool loses its brainstorming value.
+
+State Management: Can the app handle complex branching without getting "confused" about which scene belongs to which plot line?
+
+Think of me as a project lead. I’m looking for a tool that feels like a seamless collaboration between a human and an AI. 
+
+With those criteria in mind, which of those four areas do you think will be the most challenging to build first?
